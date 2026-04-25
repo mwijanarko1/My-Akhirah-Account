@@ -16,3 +16,8 @@
 ## Architecture
 
 - [Codebase map](./CODEBASE_MAP.md)
+
+## Design
+
+- [Design system](./DESIGN.md)
+- [Brand guidelines JSON](./brand_guidelines.json)
