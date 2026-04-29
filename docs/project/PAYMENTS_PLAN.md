@@ -1,6 +1,6 @@
 # Payments plan (canonical brief)
 
-This document is the canonical task brief for production donation work. It aligns with `mikhail-payments-auth-admin-and-launch-readiness-plan.md` and `docs/team/tasks/MIKHAIL_TASKS.md`.
+This document is the canonical task brief for production donation work. It aligns with `.cursor/mikhail-payments-auth-admin-and-launch-readiness-plan.md` (implementation plan in the Cursor workspace) and `docs/team/tasks/MIKHAIL_TASKS.md`.
 
 ## Approved donation CTA
 
