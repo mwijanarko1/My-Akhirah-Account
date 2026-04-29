@@ -34,11 +34,16 @@ export const CAMPAIGN_STATUSES = [
 export const DONATION_INTENT_STATUSES = [
   "created",
   "checkout_created",
+  "pending",
   "completed",
   "failed",
+  "cancelled",
   "expired",
   "abandoned",
 ] as const;
+
+/** ISO codes supported at launch for hosted checkout. */
+export const LAUNCH_CURRENCIES = ["GBP", "USD", "EUR", "GHS"] as const;
 
 export const NEWSLETTER_STATUSES = ["active", "unsubscribed", "bounced"] as const;
 
@@ -69,9 +74,18 @@ export const STAFF_STATUSES = ["active", "suspended"] as const;
 
 export const RECEIPT_STATUSES = ["queued", "sent", "failed"] as const;
 
-export const PAYMENT_PROVIDERS = ["flutterwave"] as const;
+export const PAYMENT_PROVIDERS = ["donorbox", "flutterwave", "paypal", "launchgood"] as const;
 
-export const PROCESSING_OUTCOMES = ["processed", "ignored", "failed"] as const;
+export const PROCESSING_OUTCOMES = [
+  "processed",
+  "ignored",
+  "failed",
+  "duplicate",
+  "invalid_signature",
+  "unknown_reference",
+  "amount_mismatch",
+  "currency_mismatch",
+] as const;
 
 export const MEDIA_KINDS = ["image", "video", "document"] as const;
 export const MEDIA_STATUSES = ["draft", "published", "archived"] as const;
@@ -82,6 +96,9 @@ export type ContentStatus = (typeof CONTENT_STATUSES)[number];
 export type CampaignStatus = (typeof CAMPAIGN_STATUSES)[number];
 export type DonationIntentStatus = (typeof DONATION_INTENT_STATUSES)[number];
 export type StaffRole = (typeof STAFF_ROLES)[number];
+export type PaymentProvider = (typeof PAYMENT_PROVIDERS)[number];
+export type LaunchCurrency = (typeof LAUNCH_CURRENCIES)[number];
+export type ProcessingOutcome = (typeof PROCESSING_OUTCOMES)[number];
 
 function enumValidator<const T extends readonly string[]>(values: T) {
   return v.union(...values.map((entry) => v.literal(entry)));
@@ -151,4 +168,12 @@ export function normalizeEmail(email: string): string {
 
 export function normalizeSlug(value: string): string {
   return value.trim().toLowerCase().replace(/\s+/g, "-");
+}
+
+export function normalizeLaunchCurrency(value: string): LaunchCurrency {
+  const upper = value.trim().toUpperCase();
+  if (!(LAUNCH_CURRENCIES as readonly string[]).includes(upper)) {
+    throw new Error("Unsupported currency");
+  }
+  return upper as LaunchCurrency;
 }

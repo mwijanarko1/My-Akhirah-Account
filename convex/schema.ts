@@ -195,9 +195,15 @@ export default defineSchema({
     coverFees: v.boolean(),
     isAnonymousPublic: v.boolean(),
     messageToCharity: v.optional(v.string()),
+    /** User-selected provider at checkout. */
+    selectedProvider: v.optional(paymentProviderValidator),
+    /** Active checkout / reconciliation provider (matches selected for hosted paths). */
     provider: paymentProviderValidator,
     providerSessionId: v.optional(v.string()),
     providerCheckoutUrl: v.optional(v.string()),
+    providerPaymentId: v.optional(v.string()),
+    cancelledAt: v.optional(v.number()),
+    lastWebhookEventId: v.optional(v.id("payment_events")),
     expiresAt: v.number(),
     completedDonationId: v.optional(v.id("donations")),
     failureCode: v.optional(v.string()),
@@ -216,6 +222,11 @@ export default defineSchema({
     payloadJson: v.string(),
     processedAt: v.optional(v.number()),
     processingOutcome: processingOutcomeValidator,
+    signatureVerified: v.optional(v.boolean()),
+    rawProviderStatus: v.optional(v.string()),
+    providerPaymentId: v.optional(v.string()),
+    amountMinor: v.optional(v.number()),
+    currency: v.optional(v.string()),
   }).index("by_provider_event_id", ["provider", "providerEventId"]),
 
   donations: defineTable({
@@ -263,7 +274,9 @@ export default defineSchema({
     status: receiptStatusValidator,
     retryCount: v.number(),
     nextRetryAt: v.optional(v.number()),
-  }).index("by_status_nextRetryAt", ["status", "nextRetryAt"]),
+  })
+    .index("by_status_nextRetryAt", ["status", "nextRetryAt"])
+    .index("by_donation", ["donationId"]),
 
   newsletter_subscribers: defineTable({
     email: v.string(),

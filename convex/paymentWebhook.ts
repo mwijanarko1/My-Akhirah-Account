@@ -31,6 +31,9 @@ export const handleFlutterwaveWebhook = httpAction(async (ctx, request) => {
   const eventType = payload.event ?? "unknown";
   const intentReference = payload.data?.tx_ref;
   const paymentStatus = payload.data?.status ?? "unknown";
+  const paidAmountMinor = Math.round((payload.data?.amount ?? 0) * 100);
+  const paidCurrency = payload.data?.currency ?? "USD";
+  const providerTransactionId = payload.data?.id ? String(payload.data.id) : providerEventId;
 
   const upsert = await ctx.runMutation(internal.paymentEvents.upsert, {
     provider: "flutterwave",
@@ -38,31 +41,23 @@ export const handleFlutterwaveWebhook = httpAction(async (ctx, request) => {
     eventType,
     intentReference,
     payloadJson: bodyText,
-    processingOutcome: "processed",
-    processedAt: Date.now(),
+    processingOutcome: "ignored",
+    signatureVerified: true,
+    rawProviderStatus: paymentStatus,
+    providerPaymentId: providerTransactionId,
+    amountMinor: paidAmountMinor,
+    currency: paidCurrency.toUpperCase(),
   });
 
-  if (upsert.isDuplicate) {
-    return new Response("ok", { status: 200 });
-  }
-
-  if (!intentReference) {
-    return new Response("missing tx_ref", { status: 202 });
-  }
-
-  if (paymentStatus === "successful") {
-    await ctx.runMutation(internal.donations.markIntentCompleted, {
-      intentReference,
-      providerTransactionId: payload.data?.id ? String(payload.data.id) : providerEventId,
-      paidAmountMinor: Math.round((payload.data?.amount ?? 0) * 100),
-      paidCurrency: payload.data?.currency ?? "USD",
-    });
-    return new Response("ok", { status: 200 });
-  }
-
-  await ctx.runMutation(internal.donations.markIntentFailed, {
+  const settlement = await ctx.runMutation(internal.donations.applyFlutterwaveSettlement, {
+    paymentEventId: upsert.eventId,
     intentReference,
-    failureCode: paymentStatus,
+    providerTransactionId,
+    paidAmountMinor,
+    paidCurrency,
+    paymentStatus,
+    wasDuplicateEvent: upsert.isDuplicate,
   });
-  return new Response("ok", { status: 200 });
+
+  return new Response("ok", { status: settlement.status });
 });

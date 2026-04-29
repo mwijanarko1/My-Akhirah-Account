@@ -11,6 +11,11 @@ export const upsert = internalMutation({
     payloadJson: v.string(),
     processingOutcome: processingOutcomeValidator,
     processedAt: v.optional(v.number()),
+    signatureVerified: v.optional(v.boolean()),
+    rawProviderStatus: v.optional(v.string()),
+    providerPaymentId: v.optional(v.string()),
+    amountMinor: v.optional(v.number()),
+    currency: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const existing = await ctx.db
@@ -28,6 +33,11 @@ export const upsert = internalMutation({
         payloadJson: args.payloadJson,
         processingOutcome: args.processingOutcome,
         processedAt: args.processedAt ?? existing.processedAt,
+        signatureVerified: args.signatureVerified ?? existing.signatureVerified,
+        rawProviderStatus: args.rawProviderStatus ?? existing.rawProviderStatus,
+        providerPaymentId: args.providerPaymentId ?? existing.providerPaymentId,
+        amountMinor: args.amountMinor ?? existing.amountMinor,
+        currency: args.currency ?? existing.currency,
       });
       return { eventId: existing._id, isDuplicate: true };
     }
@@ -41,6 +51,11 @@ export const upsert = internalMutation({
       receivedAt: now,
       processingOutcome: args.processingOutcome,
       processedAt: args.processedAt,
+      signatureVerified: args.signatureVerified,
+      rawProviderStatus: args.rawProviderStatus,
+      providerPaymentId: args.providerPaymentId,
+      amountMinor: args.amountMinor,
+      currency: args.currency,
     });
     return { eventId, isDuplicate: false };
   },

@@ -47,6 +47,8 @@ export const listPublished = query({
       .slice(0, limit)
       .map((campaign) => ({
         id: campaign._id,
+        slug: campaign.slug,
+        fundId: campaign.fundId,
         title: campaign.title,
         description: campaign.summary,
         imageUrl: campaignImage(campaign.heroMediaId),

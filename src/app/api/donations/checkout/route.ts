@@ -15,6 +15,7 @@ const allowedGivingTypes = new Set([
   "qurbani",
   "general",
 ]);
+
 type GivingType =
   | "zakat"
   | "sadaqah"
@@ -48,10 +49,22 @@ export async function POST(request: NextRequest) {
       coverFees: payload.coverFees,
       isAnonymousPublic: payload.isAnonymousPublic,
       messageToCharity: payload.messageToCharity,
-      expiresInMinutes: 30,
+      selectedProvider: payload.selectedProvider,
     });
 
     const origin = request.nextUrl.origin;
+    const requestId = randomUUID();
+
+    if (intent.checkoutUrl) {
+      return NextResponse.json({
+        requestId,
+        reference: intent.reference,
+        provider: "launchgood" as const,
+        checkoutUrl: intent.checkoutUrl,
+        status: "checkout_created" as const,
+      });
+    }
+
     const checkout = await runConvexAction(api.payments.createHostedCheckout, {
       intentId: intent.intentId,
       successUrl: `${origin}/donate/success?ref=${encodeURIComponent(intent.reference)}`,
@@ -59,8 +72,11 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json({
-      requestId: randomUUID(),
-      ...checkout,
+      requestId,
+      reference: checkout.reference,
+      provider: checkout.provider,
+      checkoutUrl: checkout.checkoutUrl,
+      status: checkout.status,
     });
   } catch (error) {
     return NextResponse.json(

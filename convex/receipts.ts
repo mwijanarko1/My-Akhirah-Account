@@ -14,13 +14,21 @@ export const queueReceipt = internalMutation({
       throw new Error("Donation not found");
     }
 
+    const existing = await ctx.db
+      .query("receipts")
+      .withIndex("by_donation", (q) => q.eq("donationId", args.donationId))
+      .first();
+    if (existing) {
+      return { ok: true, receiptId: existing._id, alreadyQueued: true };
+    }
+
     const donor = await ctx.db.get(donation.donorProfileId);
     if (!donor) {
       throw new Error("Donor profile not found");
     }
 
     const now = Date.now();
-    await ctx.db.insert("receipts", {
+    const receiptId = await ctx.db.insert("receipts", {
       donationId: donation._id,
       receiptNumber: createReceiptNumber(now),
       templateVersion: "v1",
@@ -34,7 +42,7 @@ export const queueReceipt = internalMutation({
       retryCount: 0,
       nextRetryAt: now,
     });
-    return { ok: true };
+    return { ok: true, receiptId, alreadyQueued: false };
   },
 });
 

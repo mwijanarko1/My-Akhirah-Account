@@ -1,3 +1,9 @@
+import {
+  assertCheckoutProvider,
+  assertLaunchCurrency,
+  assertOneOffGivingFrequency,
+} from "./donationCheckout";
+
 export interface RequestMetaInput {
   source?: string;
   requestId?: string;
@@ -100,6 +106,12 @@ export function parseVolunteerForm(formData: FormData) {
 }
 
 export function parseDonationCheckoutForm(formData: FormData) {
+  assertOneOffGivingFrequency(formData);
+  const currencyRaw = readString(formData, "currency", { required: true, max: 10 })!;
+  const selectedProviderRaw = readString(formData, "selectedProvider", { required: true, max: 32 })!;
+  assertLaunchCurrency(currencyRaw);
+  assertCheckoutProvider(selectedProviderRaw);
+
   return {
     donor: {
       fullName: readString(formData, "fullName", { required: true, max: 160 })!,
@@ -107,7 +119,7 @@ export function parseDonationCheckoutForm(formData: FormData) {
       phone: readString(formData, "phone", { max: 60 }),
       country: readString(formData, "country", { max: 100 }),
       city: readString(formData, "city", { max: 100 }),
-      preferredCurrency: readString(formData, "currency", { required: true, max: 10 })!,
+      preferredCurrency: currencyRaw.trim().toUpperCase(),
       consentEmailMarketing: readBoolean(formData, "consentEmailMarketing"),
       consentTransactionalEmail: readBoolean(formData, "consentTransactionalEmail"),
       source: readString(formData, "source", { max: 80 }),
@@ -116,9 +128,10 @@ export function parseDonationCheckoutForm(formData: FormData) {
     campaignId: readString(formData, "campaignId", { max: 64 }),
     givingType: readString(formData, "givingType", { required: true, max: 32 })!,
     amountMinor: readInteger(formData, "amountMinor", { min: 1 }),
-    currency: readString(formData, "currency", { required: true, max: 10 })!,
+    currency: currencyRaw.trim().toUpperCase(),
     coverFees: readBoolean(formData, "coverFees"),
     isAnonymousPublic: readBoolean(formData, "isAnonymousPublic"),
     messageToCharity: readString(formData, "messageToCharity", { max: 400 }),
+    selectedProvider: assertCheckoutProvider(selectedProviderRaw),
   };
 }

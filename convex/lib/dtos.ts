@@ -1,5 +1,8 @@
 export interface CampaignCardData {
   id: string;
+  /** Present when loaded from Convex for donation/checkout flows. */
+  slug?: string;
+  fundId?: string;
   title: string;
   description: string;
   imageUrl: string;
@@ -94,6 +97,7 @@ export interface DonationCheckoutInput {
   messageToCharity?: string;
   consentEmailMarketing: boolean;
   consentTransactionalEmail: boolean;
+  selectedProvider: "donorbox" | "flutterwave" | "paypal" | "launchgood";
 }
 
 export interface DonationCheckoutResult {

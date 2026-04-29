@@ -2,6 +2,7 @@ import { v } from "convex/values";
 import { internal } from "./_generated/api";
 import { httpAction, internalMutation, mutation, query } from "./_generated/server";
 import { requireDomainAccess } from "./lib/auth";
+import { createRequestId } from "./lib/references";
 import { normalizeEmail, staffRoleValidator } from "./lib/validators";
 
 export const upsertFromClerk = internalMutation({
@@ -75,12 +76,29 @@ export const setStaffRole = mutation({
   args: {
     staffUserId: v.id("staff_users"),
     role: staffRoleValidator,
+    requestId: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    await requireDomainAccess(ctx, "settings");
+    const actor = await requireDomainAccess(ctx, "settings");
+    const now = Date.now();
+    const target = await ctx.db.get(args.staffUserId);
+    if (!target) {
+      throw new Error("Staff user not found");
+    }
+    const beforeRole = target.role;
     await ctx.db.patch(args.staffUserId, {
       role: args.role,
-      updatedAt: Date.now(),
+      updatedAt: now,
+    });
+    await ctx.db.insert("audit_logs", {
+      actorStaffUserId: actor._id,
+      entityType: "staff_user",
+      entityId: String(args.staffUserId),
+      action: "set_role",
+      beforeJson: JSON.stringify({ role: beforeRole }),
+      afterJson: JSON.stringify({ role: args.role }),
+      requestId: args.requestId ?? createRequestId(now),
+      createdAt: now,
     });
     return { ok: true };
   },
@@ -88,11 +106,12 @@ export const setStaffRole = mutation({
 
 export const handleClerkUsersWebhook = httpAction(async (ctx, request) => {
   const webhookSecret = process.env.CLERK_WEBHOOK_SECRET;
-  if (webhookSecret) {
-    const token = request.headers.get("x-webhook-secret");
-    if (!token || token !== webhookSecret) {
-      return new Response("Unauthorized", { status: 401 });
-    }
+  if (!webhookSecret) {
+    return new Response("Webhook not configured", { status: 401 });
+  }
+  const token = request.headers.get("x-webhook-secret");
+  if (!token || token !== webhookSecret) {
+    return new Response("Unauthorized", { status: 401 });
   }
 
   const payload = (await request.json()) as {

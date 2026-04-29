@@ -1,6 +1,7 @@
 import { v } from "convex/values";
 import { query } from "./_generated/server";
 import { requireDomainAccess } from "./lib/auth";
+import { processingOutcomeValidator } from "./lib/validators";
 
 export const getDashboardSummary = query({
   args: {},
@@ -49,5 +50,65 @@ export const searchDonations = query({
     }
 
     return donations.sort((left, right) => right.receivedAt - left.receivedAt).slice(0, limit);
+  },
+});
+
+export const listPaymentEvents = query({
+  args: {
+    outcome: v.optional(processingOutcomeValidator),
+    limit: v.optional(v.number()),
+  },
+  handler: async (ctx, args) => {
+    await requireDomainAccess(ctx, "donations");
+    const limit = Math.min(args.limit ?? 100, 300);
+    let events = await ctx.db.query("payment_events").collect();
+    if (args.outcome) {
+      events = events.filter((entry) => entry.processingOutcome === args.outcome);
+    }
+    return events.sort((left, right) => right.receivedAt - left.receivedAt).slice(0, limit);
+  },
+});
+
+export const listReceipts = query({
+  args: {
+    status: v.optional(v.union(v.literal("queued"), v.literal("sent"), v.literal("failed"))),
+    limit: v.optional(v.number()),
+  },
+  handler: async (ctx, args) => {
+    await requireDomainAccess(ctx, "donations");
+    const limit = Math.min(args.limit ?? 100, 300);
+    let receipts = await ctx.db.query("receipts").collect();
+    if (args.status) {
+      receipts = receipts.filter((entry) => entry.status === args.status);
+    }
+    return receipts.sort((left, right) => right.queuedAt - left.queuedAt).slice(0, limit);
+  },
+});
+
+export const listAuditLogs = query({
+  args: {
+    entityType: v.optional(v.string()),
+    limit: v.optional(v.number()),
+  },
+  handler: async (ctx, args) => {
+    await requireDomainAccess(ctx, "dashboard");
+    const limit = Math.min(args.limit ?? 100, 300);
+    let logs = await ctx.db.query("audit_logs").collect();
+    if (args.entityType) {
+      logs = logs.filter((entry) => entry.entityType === args.entityType);
+    }
+    return logs.sort((left, right) => right.createdAt - left.createdAt).slice(0, limit);
+  },
+});
+
+export const listCampaignsForOps = query({
+  args: {
+    limit: v.optional(v.number()),
+  },
+  handler: async (ctx, args) => {
+    await requireDomainAccess(ctx, "donations");
+    const limit = Math.min(args.limit ?? 100, 300);
+    const campaigns = await ctx.db.query("campaigns").collect();
+    return campaigns.sort((left, right) => right.updatedAt - left.updatedAt).slice(0, limit);
   },
 });

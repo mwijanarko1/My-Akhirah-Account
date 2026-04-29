@@ -1,8 +1,30 @@
 import { v } from "convex/values";
 import { internal } from "./_generated/api";
 import { action } from "./_generated/server";
+import type { GivingType, LaunchCurrency } from "./lib/validators";
+import {
+  buildDonorboxCheckoutUrl,
+  buildPayPalDonateCheckoutUrl,
+  type CreateCheckoutInput,
+} from "./lib/paymentProviders";
 
-function parseFlutterwaveResponse(data: unknown): { checkoutUrl: string; sessionId: string } {
+type IntentCheckoutPayload = {
+  reference: string;
+  amountMinor: number;
+  amountMajor: number;
+  currency: string;
+  donorEmail: string;
+  donorName: string;
+  donorPhone?: string;
+  messageToCharity?: string;
+  fundId: string;
+  campaignId?: string;
+  givingType: GivingType;
+  provider: string;
+  selectedProvider: string;
+};
+
+function parseFlutterwavePaymentResponse(data: unknown): { checkoutUrl: string; sessionId: string } {
   if (!data || typeof data !== "object") {
     throw new Error("Invalid payment provider response");
   }
@@ -21,6 +43,27 @@ function parseFlutterwaveResponse(data: unknown): { checkoutUrl: string; session
   return { checkoutUrl, sessionId };
 }
 
+function toCheckoutInput(
+  intent: IntentCheckoutPayload,
+  successUrl: string,
+  cancelUrl: string,
+): CreateCheckoutInput {
+  return {
+    reference: intent.reference,
+    amountMinor: intent.amountMinor,
+    currency: intent.currency as LaunchCurrency,
+    donorEmail: intent.donorEmail,
+    donorName: intent.donorName,
+    donorPhone: intent.donorPhone,
+    fundId: intent.fundId,
+    campaignId: intent.campaignId,
+    givingType: intent.givingType,
+    messageToCharity: intent.messageToCharity,
+    successUrl,
+    cancelUrl,
+  };
+}
+
 export const createHostedCheckout: ReturnType<typeof action> = action({
   args: {
     intentId: v.id("donation_intents"),
@@ -35,58 +78,106 @@ export const createHostedCheckout: ReturnType<typeof action> = action({
       throw new Error("Donation intent not found");
     }
 
-    const secretKey = process.env.FLUTTERWAVE_SECRET_KEY;
-    if (!secretKey) {
-      throw new Error("FLUTTERWAVE_SECRET_KEY is not configured");
+    const typedIntent = intent as IntentCheckoutPayload;
+    const provider = typedIntent.selectedProvider ?? typedIntent.provider;
+
+    if (provider === "launchgood") {
+      throw new Error("LaunchGood checkout is prepared when the intent is created");
     }
 
-    const response = await fetch("https://api.flutterwave.com/v3/payments", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${secretKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        tx_ref: intent.reference,
-        amount: intent.amountMajor,
-        currency: intent.currency,
-        redirect_url: args.successUrl,
-        customer: {
-          email: intent.donorEmail,
-          name: intent.donorName,
-          phone_number: intent.donorPhone,
-        },
-        customizations: {
-          title: "My Akhirah Account",
-          description: intent.messageToCharity ?? "Donation",
-        },
-        meta: {
-          donation_reference: intent.reference,
-          fund_id: intent.fundId,
-          campaign_id: intent.campaignId ?? null,
-          giving_type: intent.givingType,
-          cancel_url: args.cancelUrl,
-        },
-      }),
-    });
+    const checkoutInput = toCheckoutInput(typedIntent, args.successUrl, args.cancelUrl);
 
-    if (!response.ok) {
-      const failure = await response.text();
-      throw new Error(`Checkout creation failed: ${failure}`);
+    if (provider === "flutterwave") {
+      const secretKey = process.env.FLUTTERWAVE_SECRET_KEY;
+      if (!secretKey) {
+        throw new Error("FLUTTERWAVE_SECRET_KEY is not configured");
+      }
+
+      const response = await fetch("https://api.flutterwave.com/v3/payments", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${secretKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          tx_ref: typedIntent.reference,
+          amount: typedIntent.amountMajor,
+          currency: typedIntent.currency,
+          redirect_url: args.successUrl,
+          customer: {
+            email: typedIntent.donorEmail,
+            name: typedIntent.donorName,
+            phone_number: typedIntent.donorPhone,
+          },
+          customizations: {
+            title: "My Akhirah Account",
+            description: typedIntent.messageToCharity ?? "Donation",
+          },
+          meta: {
+            donation_reference: typedIntent.reference,
+            fund_id: typedIntent.fundId,
+            campaign_id: typedIntent.campaignId ?? null,
+            giving_type: typedIntent.givingType,
+            cancel_url: args.cancelUrl,
+          },
+        }),
+      });
+
+      if (!response.ok) {
+        const failure = await response.text();
+        throw new Error(`Checkout creation failed: ${failure}`);
+      }
+
+      const body = await response.json();
+      const { checkoutUrl, sessionId } = parseFlutterwavePaymentResponse(body);
+
+      await ctx.runMutation(internal.donationCheckoutData.updateCheckoutSession, {
+        intentId: args.intentId,
+        providerSessionId: sessionId,
+        checkoutUrl,
+      });
+
+      return {
+        requestId: "",
+        reference: typedIntent.reference,
+        provider: "flutterwave" as const,
+        checkoutUrl,
+        status: "checkout_created" as const,
+      };
     }
 
-    const body = await response.json();
-    const { checkoutUrl, sessionId } = parseFlutterwaveResponse(body);
+    if (provider === "donorbox") {
+      const checkoutUrl = buildDonorboxCheckoutUrl(checkoutInput);
+      await ctx.runMutation(internal.donationCheckoutData.updateCheckoutSession, {
+        intentId: args.intentId,
+        providerSessionId: intent.reference,
+        checkoutUrl,
+      });
+      return {
+        requestId: "",
+        reference: typedIntent.reference,
+        provider: "donorbox" as const,
+        checkoutUrl,
+        status: "checkout_created" as const,
+      };
+    }
 
-    await ctx.runMutation(internal.donationCheckoutData.updateCheckoutSession, {
-      intentId: args.intentId,
-      providerSessionId: sessionId,
-      checkoutUrl,
-    });
+    if (provider === "paypal") {
+      const checkoutUrl = buildPayPalDonateCheckoutUrl(checkoutInput);
+      await ctx.runMutation(internal.donationCheckoutData.updateCheckoutSession, {
+        intentId: args.intentId,
+        providerSessionId: intent.reference,
+        checkoutUrl,
+      });
+      return {
+        requestId: "",
+        reference: typedIntent.reference,
+        provider: "paypal" as const,
+        checkoutUrl,
+        status: "checkout_created" as const,
+      };
+    }
 
-    return {
-      reference: intent.reference,
-      checkoutUrl,
-    };
+    throw new Error(`Unsupported checkout provider: ${provider}`);
   },
 });
