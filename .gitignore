@@ -23,6 +23,9 @@
 # Cursor IDE — local workspace (rules, personal copies); do not commit
 .cursor/
 
+# Project docs — optional local copies (not committed)
+/docs/project/mikhail-payments-auth-admin-and-launch-readiness-plan.md
+
 # misc
 .DS_Store
 *.pem
