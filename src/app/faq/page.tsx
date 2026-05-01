@@ -164,7 +164,7 @@ export default function FaqPage() {
           <div className="container-custom max-w-full py-14 sm:py-16 md:py-20">
             <div className="max-w-3xl">
               <p className="text-xs font-semibold uppercase tracking-wider text-eternal-gold mb-3">Support</p>
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-balance mb-4">Frequently Asked Questions</h1>
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-balance break-words mb-4">Frequently Asked Questions</h1>
               <p className="text-white/85 text-base sm:text-lg leading-relaxed">
                 Clear answers on donations, receipts, Zakat and Sadaqah, volunteering, contact routes, and how we
                 protect your trust.
@@ -182,13 +182,13 @@ export default function FaqPage() {
                   id={section.id}
                   className={`rounded-sm border border-akhirah-teal/15 p-5 sm:p-6 md:p-8 ${index % 2 === 1 ? "bg-mercy-mint/40" : "bg-purity-white"}`}
                 >
-                  <h2 className="text-2xl sm:text-3xl font-bold text-akhirah-teal mb-2">{section.title}</h2>
+                  <h2 className="text-2xl sm:text-3xl font-bold text-akhirah-teal text-balance break-words mb-2">{section.title}</h2>
                   <p className="text-account-black/75 text-sm sm:text-base mb-6">{section.intro}</p>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
                     {section.items.map((item) => (
                       <details key={item.question} className="group rounded-sm border border-akhirah-teal/15 bg-purity-white p-4 sm:p-5">
-                        <summary className="min-h-11 cursor-pointer list-none pr-7 text-base sm:text-lg font-semibold text-account-black relative">
+                        <summary className="min-h-11 cursor-pointer list-none pr-7 text-base sm:text-lg leading-snug font-semibold text-account-black break-words relative">
                           {item.question}
                           <span className="absolute right-0 top-0 text-akhirah-teal/70 group-open:hidden" aria-hidden>
                             +

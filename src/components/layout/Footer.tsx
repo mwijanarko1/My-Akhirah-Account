@@ -84,7 +84,7 @@ export default function Footer() {
                             <p className="text-xs font-semibold uppercase tracking-wider text-eternal-gold mb-4">
                                 Transparency & trust
                             </p>
-                            <div className="grid grid-cols-3 gap-3 max-w-md">
+                            <div className="grid grid-cols-2 gap-3 max-w-md sm:grid-cols-3">
                                 {["Governance", "Annual reports", "Safeguarding"].map((label) => (
                                     <div
                                         key={label}
