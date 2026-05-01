@@ -4,31 +4,40 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState, FormEvent, useMemo } from "react";
 
-const footerLinks = {
-    about: [
-        { href: "/about", label: "About us" },
-        { href: "/team", label: "Our team" },
-        { href: "/careers", label: "Careers" },
-        { href: "/contact", label: "Contact" },
-    ],
-    work: [
-        { href: "/projects", label: "What we do" },
-        { href: "/events", label: "Events" },
-        { href: "/blog", label: "News & stories" },
-        { href: "/partners", label: "Partners" },
-    ],
-    involved: [
-        { href: "/donate", label: "Donate" },
-        { href: "/volunteer", label: "Volunteer" },
-        { href: "/fundraise", label: "Fundraise" },
-        { href: "/zakat", label: "Zakat" },
-    ],
-    legal: [
-        { href: "/privacy", label: "Privacy" },
-        { href: "/terms", label: "Terms" },
-        { href: "/faq", label: "FAQ" },
-    ],
-};
+const footerLinkGroups = [
+    {
+        title: "Organisation",
+        links: [
+            { href: "/about", label: "About us" },
+            { href: "/contact", label: "Contact" },
+            { href: "/faq", label: "FAQ" },
+        ],
+    },
+    {
+        title: "Programmes",
+        links: [
+            { href: "/campaigns", label: "Campaigns" },
+            { href: "/programmes", label: "Programmes" },
+            { href: "/events", label: "Events" },
+            { href: "/blog", label: "Blog" },
+        ],
+    },
+    {
+        title: "Get involved",
+        links: [
+            { href: "/volunteer", label: "Volunteer" },
+            { href: "/newsletter", label: "Newsletter" },
+            { href: "/safeguarding", label: "Safeguarding" },
+        ],
+    },
+    {
+        title: "Legal",
+        links: [
+            { href: "/privacy-policy", label: "Privacy policy" },
+            { href: "/terms", label: "Terms" },
+        ],
+    },
+] as const;
 
 const socialLinks = [
     { href: "https://facebook.com", label: "Facebook", icon: "facebook" },
@@ -149,8 +158,8 @@ export default function Footer() {
 
             <div className="py-10 sm:py-12 md:py-14">
                 <div className="container-custom max-w-full">
-                    <div className="grid grid-cols-1 gap-10 mb-10 sm:grid-cols-2 sm:gap-x-8 sm:gap-y-10 sm:mb-12 lg:grid-cols-5 lg:gap-8">
-                        <div className="sm:col-span-2 lg:col-span-1 lg:max-w-[14rem]">
+                    <div className="grid grid-cols-1 gap-10 mb-10 sm:grid-cols-2 sm:gap-x-8 sm:gap-y-10 sm:mb-12 lg:grid-cols-[minmax(0,1.15fr)_repeat(4,minmax(0,1fr))] lg:items-start lg:gap-8">
+                        <div className="sm:col-span-2 lg:col-span-1 lg:max-w-[16rem]">
                             <Link href="/" className="inline-block mb-4">
                                 <Image
                                     src="/Logo Png White@3x.png"
@@ -170,7 +179,7 @@ export default function Footer() {
                                         href={social.href}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="w-10 h-10 rounded-sm bg-white/10 flex items-center justify-center hover:bg-eternal-gold hover:text-account-black transition-colors"
+                                        className="h-11 w-11 rounded-sm bg-white/10 flex items-center justify-center hover:bg-eternal-gold hover:text-account-black transition-colors"
                                         aria-label={`${social.label} (opens in new tab)`}
                                     >
                                         <SocialIcon icon={social.icon} />
@@ -179,77 +188,25 @@ export default function Footer() {
                             </div>
                         </div>
 
-                        <div>
-                            <h4 className="font-bold mb-4 text-sm uppercase tracking-wide text-eternal-gold/95">
-                                About
-                            </h4>
-                            <ul className="space-y-2.5">
-                                {footerLinks.about.map((link) => (
-                                    <li key={link.href}>
-                                        <Link
-                                            href={link.href}
-                                            className="text-white/70 hover:text-white text-sm transition-colors"
-                                        >
-                                            {link.label}
-                                        </Link>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-
-                        <div>
-                            <h4 className="font-bold mb-4 text-sm uppercase tracking-wide text-eternal-gold/95">
-                                What we do
-                            </h4>
-                            <ul className="space-y-2.5">
-                                {footerLinks.work.map((link) => (
-                                    <li key={link.href}>
-                                        <Link
-                                            href={link.href}
-                                            className="text-white/70 hover:text-white text-sm transition-colors"
-                                        >
-                                            {link.label}
-                                        </Link>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-
-                        <div>
-                            <h4 className="font-bold mb-4 text-sm uppercase tracking-wide text-eternal-gold/95">
-                                Get involved
-                            </h4>
-                            <ul className="space-y-2.5">
-                                {footerLinks.involved.map((link) => (
-                                    <li key={link.href}>
-                                        <Link
-                                            href={link.href}
-                                            className="text-white/70 hover:text-white text-sm transition-colors"
-                                        >
-                                            {link.label}
-                                        </Link>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-
-                        <div>
-                            <h4 className="font-bold mb-4 text-sm uppercase tracking-wide text-eternal-gold/95">
-                                Legal
-                            </h4>
-                            <ul className="space-y-2.5">
-                                {footerLinks.legal.map((link) => (
-                                    <li key={link.href}>
-                                        <Link
-                                            href={link.href}
-                                            className="text-white/70 hover:text-white text-sm transition-colors"
-                                        >
-                                            {link.label}
-                                        </Link>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
+                        {footerLinkGroups.map((group) => (
+                            <div key={group.title}>
+                                <h4 className="font-bold mb-4 text-sm uppercase tracking-wide text-eternal-gold/95">
+                                    {group.title}
+                                </h4>
+                                <ul className="space-y-1.5">
+                                    {group.links.map((link) => (
+                                        <li key={link.href}>
+                                            <Link
+                                                href={link.href}
+                                                className="flex min-h-11 items-center text-white/75 hover:text-white text-sm transition-colors"
+                                            >
+                                                {link.label}
+                                            </Link>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        ))}
                     </div>
 
                     <div className="pt-8 border-t border-white/15 text-center text-xs md:text-sm text-white/50">
