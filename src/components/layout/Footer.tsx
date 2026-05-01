@@ -2,33 +2,36 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState, FormEvent, useMemo } from "react";
+import NewsletterSubscribeForm from "@/components/forms/NewsletterSubscribeForm";
 
+/** Aligned with `docs/team/tasks/navigation-map.md` */
 const footerLinks = {
-    about: [
-        { href: "/about", label: "About us" },
-        { href: "/team", label: "Our team" },
-        { href: "/careers", label: "Careers" },
-        { href: "/contact", label: "Contact" },
-    ],
-    work: [
-        { href: "/projects", label: "What we do" },
+    discover: [
+        { href: "/campaigns", label: "Campaigns" },
+        { href: "/programmes", label: "Programmes" },
+        { href: "/blog", label: "Blog" },
         { href: "/events", label: "Events" },
-        { href: "/blog", label: "News & stories" },
-        { href: "/partners", label: "Partners" },
+        { href: "/faq", label: "FAQ" },
     ],
-    involved: [
-        { href: "/donate", label: "Donate" },
+    organisation: [
+        { href: "/about", label: "About us" },
+        { href: "/contact", label: "Contact" },
         { href: "/volunteer", label: "Volunteer" },
-        { href: "/fundraise", label: "Fundraise" },
-        { href: "/zakat", label: "Zakat" },
+        { href: "/newsletter", label: "Newsletter" },
     ],
+    involved: [{ href: "/donate", label: "Donate" }],
     legal: [
         { href: "/privacy", label: "Privacy" },
         { href: "/terms", label: "Terms" },
         { href: "/faq", label: "FAQ" },
     ],
 };
+
+const transparencyTiles = [
+    { href: "/privacy", label: "Governance" },
+    { href: "/terms", label: "Annual reports" },
+    { href: "/faq", label: "Safeguarding" },
+] as const;
 
 const socialLinks = [
     { href: "https://facebook.com", label: "Facebook", icon: "facebook" },
@@ -38,42 +41,9 @@ const socialLinks = [
 ];
 
 export default function Footer() {
-    const [email, setEmail] = useState("");
-    const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
-    const [errorMessage, setErrorMessage] = useState("");
-    const startedAt = useMemo(() => Date.now().toString(), []);
-
-    const handleSubmit = async (e: FormEvent) => {
-        e.preventDefault();
-        setStatus("submitting");
-        setErrorMessage("");
-
-        try {
-            const formData = new FormData();
-            formData.set("email", email);
-            formData.set("consentTextVersion", "v1");
-            formData.set("source", "footer");
-            formData.set("company", "");
-            formData.set("startedAt", startedAt);
-
-            const response = await fetch("/api/newsletter", {
-                method: "POST",
-                body: formData,
-            });
-            if (!response.ok) {
-                throw new Error("Failed to subscribe");
-            }
-            setStatus("success");
-            setEmail("");
-        } catch {
-            setStatus("error");
-            setErrorMessage("Failed to subscribe. Please try again.");
-        }
-    };
-
     return (
         <footer className="bg-akhirah-teal-dark text-purity-white">
-            <div className="border-b border-white/10">
+            <div id="site-newsletter" className="border-b border-white/10 scroll-mt-24">
                 <div className="container-custom max-w-full py-10 sm:py-12 md:py-14">
                     <div className="grid gap-8 sm:gap-10 lg:grid-cols-2 lg:gap-16 items-start">
                         <div>
@@ -81,15 +51,16 @@ export default function Footer() {
                                 Transparency & trust
                             </p>
                             <div className="grid grid-cols-3 gap-3 max-w-md">
-                                {["Governance", "Annual reports", "Safeguarding"].map((label) => (
-                                    <div
-                                        key={label}
-                                        className="aspect-[4/3] rounded-sm bg-white/5 border border-white/15 flex items-center justify-center text-center p-2"
+                                {transparencyTiles.map((tile) => (
+                                    <Link
+                                        key={tile.href + tile.label}
+                                        href={tile.href}
+                                        className="aspect-[4/3] rounded-sm bg-white/5 border border-white/15 flex items-center justify-center text-center p-2 hover:bg-white/10 hover:border-eternal-gold/40 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-eternal-gold"
                                     >
                                         <span className="text-[0.65rem] md:text-xs font-semibold text-white/80 leading-tight">
-                                            {label}
+                                            {tile.label}
                                         </span>
-                                    </div>
+                                    </Link>
                                 ))}
                             </div>
                         </div>
@@ -98,50 +69,7 @@ export default function Footer() {
                             <p className="text-white/75 text-sm mb-5 max-w-md">
                                 Occasional updates on impact, events, and ways to give with intention.
                             </p>
-                            <form
-                                className="flex flex-col sm:flex-row gap-3 max-w-lg"
-                                onSubmit={handleSubmit}
-                                aria-label="Newsletter subscription form"
-                            >
-                                <div className="flex-1">
-                                    <label htmlFor="newsletter-email" className="sr-only">
-                                        Email address
-                                    </label>
-                                    <input
-                                        id="newsletter-email"
-                                        type="email"
-                                        className="min-h-11 w-full px-4 py-3 text-base rounded-sm text-account-black focus:outline-none focus:ring-2 focus:ring-eternal-gold"
-                                        required
-                                        autoComplete="email"
-                                        name="email"
-                                        value={email}
-                                        onChange={(e) => setEmail(e.target.value)}
-                                        disabled={status === "submitting"}
-                                        aria-describedby={status === "error" ? "newsletter-error" : undefined}
-                                        aria-invalid={status === "error"}
-                                    />
-                                    <input type="hidden" name="company" value="" />
-                                    <input type="hidden" name="startedAt" value={startedAt} />
-                                </div>
-                                <button
-                                    type="submit"
-                                    className="btn btn-primary whitespace-nowrap font-bold"
-                                    disabled={status === "submitting"}
-                                    aria-busy={status === "submitting"}
-                                >
-                                    {status === "submitting" ? "Subscribing…" : "Subscribe"}
-                                </button>
-                            </form>
-                            {status === "success" && (
-                                <p className="mt-3 text-sm text-mercy-mint" role="status">
-                                    Thank you for subscribing.
-                                </p>
-                            )}
-                            {status === "error" && (
-                                <p id="newsletter-error" className="mt-3 text-sm text-red-300" role="alert">
-                                    {errorMessage}
-                                </p>
-                            )}
+                            <NewsletterSubscribeForm source="footer" />
                         </div>
                     </div>
                 </div>
@@ -181,10 +109,10 @@ export default function Footer() {
 
                         <div>
                             <h4 className="font-bold mb-4 text-sm uppercase tracking-wide text-eternal-gold/95">
-                                About
+                                Discover
                             </h4>
                             <ul className="space-y-2.5">
-                                {footerLinks.about.map((link) => (
+                                {footerLinks.discover.map((link) => (
                                     <li key={link.href}>
                                         <Link
                                             href={link.href}
@@ -199,10 +127,10 @@ export default function Footer() {
 
                         <div>
                             <h4 className="font-bold mb-4 text-sm uppercase tracking-wide text-eternal-gold/95">
-                                What we do
+                                Organisation
                             </h4>
                             <ul className="space-y-2.5">
-                                {footerLinks.work.map((link) => (
+                                {footerLinks.organisation.map((link) => (
                                     <li key={link.href}>
                                         <Link
                                             href={link.href}
