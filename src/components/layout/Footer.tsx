@@ -12,14 +12,15 @@ const footerLinks = {
         { href: "/contact", label: "Contact" },
     ],
     work: [
-        { href: "/projects", label: "What we do" },
+        { href: "/campaigns", label: "Campaigns" },
+        { href: "/programmes", label: "Programmes" },
         { href: "/events", label: "Events" },
         { href: "/blog", label: "News & stories" },
-        { href: "/partners", label: "Partners" },
     ],
     involved: [
         { href: "/donate", label: "Donate" },
         { href: "/volunteer", label: "Volunteer" },
+        { href: "/newsletter", label: "Newsletter" },
         { href: "/fundraise", label: "Fundraise" },
         { href: "/zakat", label: "Zakat" },
     ],
