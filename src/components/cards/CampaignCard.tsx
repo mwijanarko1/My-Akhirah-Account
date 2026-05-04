@@ -30,8 +30,8 @@ export default function CampaignCard({
 
     return (
         <article className="card group flex h-full min-w-0 flex-col">
-            <Link href={href} className="block flex flex-col h-full">
-                <div className="relative aspect-video overflow-hidden">
+            <div className="relative aspect-video overflow-hidden">
+                <Link href={href} aria-hidden="true" tabIndex={-1}>
                     <Image
                         src={imageUrl}
                         alt=""
@@ -39,35 +39,46 @@ export default function CampaignCard({
                         className="object-cover transition-transform duration-500 group-hover:scale-[1.02]"
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     />
-                </div>
-                <div className="p-4 md:p-5 flex flex-col flex-1">
+                </Link>
+            </div>
+            <div className="p-4 md:p-5 flex flex-col flex-1">
+                <Link href={href} className="outline-none focus-visible:ring-2 focus-visible:ring-akhirah-teal rounded-sm">
                     <h3 className="font-bold text-lg mb-2 text-account-black group-hover:text-akhirah-teal transition-colors line-clamp-2 leading-snug">
                         {title}
                     </h3>
-                    <p className="text-account-black/70 text-sm mb-4 line-clamp-2 flex-1">{description}</p>
+                </Link>
+                <p className="text-account-black/70 text-sm mb-4 line-clamp-2 flex-1">{description}</p>
 
-                    <div className="mb-2" role="region" aria-label={`${title} fundraising progress`}>
+                <div className="mb-4" role="region" aria-label={`${title} fundraising progress`}>
+                    <div
+                        className="h-2 bg-mercy-mint rounded-sm overflow-hidden border border-akhirah-teal/10"
+                        role="progressbar"
+                        aria-valuenow={Math.round(progress)}
+                        aria-valuemin={0}
+                        aria-valuemax={100}
+                        aria-label={`${Math.round(progress)}% of goal reached`}
+                    >
                         <div
-                            className="h-2 bg-mercy-mint rounded-sm overflow-hidden border border-akhirah-teal/10"
-                            role="progressbar"
-                            aria-valuenow={Math.round(progress)}
-                            aria-valuemin={0}
-                            aria-valuemax={100}
-                            aria-label={`${Math.round(progress)}% of goal reached`}
-                        >
-                            <div
-                                className="h-full bg-eternal-gold rounded-sm transition-all duration-500"
-                                style={{ width: `${progress}%` }}
-                            />
-                        </div>
-                    </div>
-
-                    <div className="flex justify-between text-sm">
-                        <span className="font-bold text-akhirah-teal">{formatCurrency(raised)} raised</span>
-                        <span className="text-account-black/55">of {formatCurrency(goal)}</span>
+                            className="h-full bg-eternal-gold rounded-sm transition-all duration-500"
+                            style={{ width: `${progress}%` }}
+                        />
                     </div>
                 </div>
-            </Link>
+
+                <div className="flex justify-between text-sm mb-4">
+                    <span className="font-bold text-akhirah-teal">{formatCurrency(raised)} raised</span>
+                    <span className="text-account-black/55">of {formatCurrency(goal)}</span>
+                </div>
+                
+                <div className="mt-auto pt-2 border-t border-gray-100">
+                    <Link 
+                        href={`/donate?campaign=${encodeURIComponent(title)}`} 
+                        className="w-full btn border-2 border-akhirah-teal text-akhirah-teal hover:bg-mercy-mint py-2 rounded-sm block text-center font-bold text-sm"
+                    >
+                        Donate to {title}
+                    </Link>
+                </div>
+            </div>
         </article>
     );
 }
