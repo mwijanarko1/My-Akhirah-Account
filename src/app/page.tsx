@@ -86,7 +86,7 @@ export default async function HomePage() {
             <SectionHeader
               title="Where your giving goes"
               subtitle="Choose a focus area — we handle diligence, delivery, and reporting."
-              viewAllHref="/projects"
+              viewAllHref="/programmes"
               viewAllText="All programmes"
             />
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 lg:gap-8">
