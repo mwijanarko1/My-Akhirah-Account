@@ -231,7 +231,7 @@ export default function VolunteerForm() {
           placeholder="School builds, distributions, volunteering locally, translations…"
           maxLength={600}
           required
-          className={`${fieldClass} min-h-[5.5rem]`}
+          className={`${fieldClass} min-h-[5.5rem] resize-y`}
           value={draft.interestsRaw}
           onChange={(e) => setField("interestsRaw")(e.target.value)}
           disabled={submitting}
@@ -284,7 +284,7 @@ export default function VolunteerForm() {
           rows={4}
           autoComplete="off"
           maxLength={4000}
-          className={`${fieldClass} min-h-[7rem]`}
+          className={`${fieldClass} min-h-[7rem] resize-y`}
           value={draft.experience}
           onChange={(e) => setField("experience")(e.target.value)}
           disabled={submitting}
@@ -309,7 +309,7 @@ export default function VolunteerForm() {
           autoComplete="off"
           required
           maxLength={4000}
-          className={`${fieldClass} min-h-[8rem]`}
+          className={`${fieldClass} min-h-[8rem] resize-y`}
           value={draft.motivation}
           onChange={(e) => setField("motivation")(e.target.value)}
           disabled={submitting}

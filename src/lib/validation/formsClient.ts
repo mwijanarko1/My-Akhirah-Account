@@ -4,6 +4,7 @@
  */
 
 const trim = (v: string) => v.trim();
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function required(label: string, value: string, max: number): string | undefined {
   const t = trim(value);
@@ -16,6 +17,14 @@ function optionalMax(label: string, value: string, max: number): string | undefi
   const t = trim(value);
   if (!t) return undefined;
   if (t.length > max) return `${label} must be ${max} characters or fewer`;
+  return undefined;
+}
+
+function emailError(value: string): string | undefined {
+  const t = trim(value);
+  if (!t) return "Email is required";
+  if (t.length > 255) return "Email must be 255 characters or fewer";
+  if (!EMAIL_REGEX.test(t)) return "Enter a valid email address";
   return undefined;
 }
 
@@ -33,7 +42,7 @@ export function validateContactDraft(draft: ContactDraft): Partial<Record<keyof 
   let e = required("Full name", draft.fullName, 160);
   if (e) errs.fullName = e;
 
-  e = required("Email", draft.email, 255);
+  e = emailError(draft.email);
   if (e) errs.email = e;
 
   e = optionalMax("Phone", draft.phone, 60);
@@ -54,7 +63,7 @@ export interface NewsletterDraft {
 
 export function validateNewsletterDraft(draft: NewsletterDraft): Partial<Record<keyof NewsletterDraft, string>> {
   const errs: Partial<Record<keyof NewsletterDraft, string>> = {};
-  const e = required("Email", draft.email, 255);
+  const e = emailError(draft.email);
   if (e) errs.email = e;
   return errs;
 }
@@ -77,7 +86,7 @@ export function validateVolunteerDraft(draft: VolunteerDraft): Partial<Record<ke
   let e = required("Full name", draft.fullName, 160);
   if (e) errs.fullName = e;
 
-  e = required("Email", draft.email, 255);
+  e = emailError(draft.email);
   if (e) errs.email = e;
 
   e = required("Phone", draft.phone, 60);

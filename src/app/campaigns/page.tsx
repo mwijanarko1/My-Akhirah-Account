@@ -16,8 +16,8 @@ export default function CampaignsPage() {
         <section className="section">
           <div className="container-custom">
             <div className="mb-8 max-w-3xl md:mb-10">
-              <p className="mb-3 text-sm font-semibold uppercase tracking-wide text-akhirah-teal">Campaigns</p>
-              <h1 className="mb-4 text-3xl font-bold text-account-black md:text-5xl">Support active appeals</h1>
+              <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-akhirah-teal">Campaigns</p>
+              <h1 className="mb-4 text-3xl font-bold text-akhirah-teal md:text-5xl">Support active appeals</h1>
               <p className="text-base leading-relaxed text-account-black/70 md:text-lg">
                 Choose a live campaign and help fund urgent relief, recovery, and care for communities who need support now.
               </p>

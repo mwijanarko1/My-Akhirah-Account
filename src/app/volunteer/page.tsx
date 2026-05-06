@@ -12,7 +12,7 @@ export default function VolunteerPage() {
     <PageShell>
       <section className="section bg-gradient-to-b from-akhirah-teal to-akhirah-teal-dark text-purity-white border-b border-white/10">
         <div className="container-custom">
-          <p className="text-xs font-semibold uppercase tracking-wider text-eternal-gold mb-3">Volunteer</p>
+          <p className="text-xs font-semibold uppercase tracking-wider text-purity-white mb-3">Volunteer</p>
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-balance max-w-3xl leading-tight">
             Give time with intention
           </h1>

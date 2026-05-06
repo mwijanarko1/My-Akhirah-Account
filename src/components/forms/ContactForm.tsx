@@ -189,7 +189,7 @@ export default function ContactForm() {
           autoComplete="off"
           required
           maxLength={6000}
-          className={`${fieldClass} min-h-[9rem]`}
+          className={`${fieldClass} min-h-[9rem] resize-y`}
           value={draft.message}
           onChange={(e) => setField("message")(e.target.value)}
           disabled={submitting}
