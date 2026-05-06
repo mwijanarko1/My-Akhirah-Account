@@ -1,6 +1,7 @@
 "use client";
 
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
+import { mapSubmitError, validateNewsletterDraft } from "@/lib/validation/formsClient";
 
 type NewsletterSubscribeFormProps = {
     /** Sent to `/api/newsletter` as `source` for analytics */
@@ -17,32 +18,47 @@ export default function NewsletterSubscribeForm({
     const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
     const [errorMessage, setErrorMessage] = useState("");
     const startedAt = useMemo(() => Date.now().toString(), []);
+    const [honeypotArmed, setHoneypotArmed] = useState(false);
+    const [company, setCompany] = useState("");
+
+    useEffect(() => {
+        setHoneypotArmed(true);
+    }, []);
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
+        const validation = validateNewsletterDraft({ email });
+        if (validation.email) {
+            setStatus("error");
+            setErrorMessage(validation.email);
+            return;
+        }
         setStatus("submitting");
         setErrorMessage("");
 
         try {
             const formData = new FormData();
-            formData.set("email", email);
+            formData.set("email", email.trim());
             formData.set("consentTextVersion", "v1");
             formData.set("source", source);
-            formData.set("company", "");
+            formData.set("company", company);
             formData.set("startedAt", startedAt);
 
             const response = await fetch("/api/newsletter", {
                 method: "POST",
                 body: formData,
             });
+            const body = await response.json().catch(() => ({}));
             if (!response.ok) {
-                throw new Error("Failed to subscribe");
+                setStatus("error");
+                setErrorMessage(mapSubmitError(body));
+                return;
             }
             setStatus("success");
             setEmail("");
         } catch {
             setStatus("error");
-            setErrorMessage("Failed to subscribe. Please try again.");
+            setErrorMessage("Unable to submit right now.");
         }
     };
 
@@ -71,14 +87,34 @@ export default function NewsletterSubscribeForm({
                         className="min-h-11 w-full px-4 py-3 text-base rounded-sm text-account-black focus:outline-none focus:ring-2 focus:ring-eternal-gold border-2 border-akhirah-teal/15 bg-purity-white"
                         required
                         autoComplete="email"
+                        maxLength={255}
                         name="email"
                         value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        onChange={(e) => {
+                            setEmail(e.target.value);
+                            if (status === "error") {
+                                setStatus("idle");
+                                setErrorMessage("");
+                            }
+                        }}
                         disabled={status === "submitting"}
                         aria-describedby={status === "error" ? `newsletter-error-${source}` : undefined}
                         aria-invalid={status === "error"}
                     />
-                    <input type="hidden" name="company" value="" />
+                    {honeypotArmed ? (
+                        <div className="absolute -left-[10000px] top-auto h-px w-px overflow-hidden" aria-hidden="true">
+                            <label htmlFor={`newsletter-company-${source}`}>Company</label>
+                            <input
+                                id={`newsletter-company-${source}`}
+                                name="company"
+                                type="text"
+                                autoComplete="off"
+                                tabIndex={-1}
+                                value={company}
+                                onChange={(e) => setCompany(e.target.value)}
+                            />
+                        </div>
+                    ) : null}
                     <input type="hidden" name="startedAt" value={startedAt} />
                 </div>
                 <button

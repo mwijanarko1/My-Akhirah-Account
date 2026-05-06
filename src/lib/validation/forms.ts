@@ -5,6 +5,8 @@ export interface RequestMetaInput {
   ipHash?: string;
 }
 
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 function readString(formData: FormData, key: string, options?: { required?: boolean; max?: number }): string | undefined {
   const value = formData.get(key);
   if (typeof value !== "string") {
@@ -52,18 +54,36 @@ export function verifyHoneypot(formData: FormData, honeypotKey = "company"): voi
 }
 
 export function verifySubmissionDelay(formData: FormData, key = "startedAt", minDelayMs = 1000): void {
-  const startedAt = Number(formData.get(key));
-  if (!Number.isFinite(startedAt)) {
-    return;
+  const raw = formData.get(key);
+  if (typeof raw !== "string" || !raw.trim()) {
+    throw new Error("Missing startedAt");
   }
-  if (Date.now() - startedAt < minDelayMs) {
+
+  const startedAt = Number(raw);
+  if (!Number.isFinite(startedAt)) {
+    throw new Error("Invalid startedAt");
+  }
+
+  const ageMs = Date.now() - startedAt;
+  if (ageMs < minDelayMs) {
     throw new Error("Submission too fast");
   }
+  if (ageMs > 60 * 60 * 1000) {
+    throw new Error("Submission expired");
+  }
+}
+
+function readEmail(formData: FormData, key = "email"): string {
+  const email = readString(formData, key, { required: true, max: 255 })!;
+  if (!EMAIL_REGEX.test(email)) {
+    throw new Error("Invalid email format");
+  }
+  return email;
 }
 
 export function parseNewsletterForm(formData: FormData) {
   return {
-    email: readString(formData, "email", { required: true, max: 255 })!,
+    email: readEmail(formData),
     consentTextVersion: readString(formData, "consentTextVersion", { required: true, max: 40 })!,
     source: readString(formData, "source", { max: 80 }),
   };
@@ -72,7 +92,7 @@ export function parseNewsletterForm(formData: FormData) {
 export function parseContactForm(formData: FormData) {
   return {
     fullName: readString(formData, "fullName", { required: true, max: 160 })!,
-    email: readString(formData, "email", { required: true, max: 255 })!,
+    email: readEmail(formData),
     phone: readString(formData, "phone", { max: 60 }),
     subject: readString(formData, "subject", { required: true, max: 200 })!,
     message: readString(formData, "message", { required: true, max: 6000 })!,
@@ -85,10 +105,13 @@ export function parseVolunteerForm(formData: FormData) {
     .split(",")
     .map((entry) => entry.trim())
     .filter(Boolean);
+  if (!interests.length) {
+    throw new Error("Missing interests");
+  }
 
   return {
     fullName: readString(formData, "fullName", { required: true, max: 160 })!,
-    email: readString(formData, "email", { required: true, max: 255 })!,
+    email: readEmail(formData),
     phone: readString(formData, "phone", { required: true, max: 60 })!,
     country: readString(formData, "country", { required: true, max: 100 })!,
     city: readString(formData, "city", { required: true, max: 100 })!,
@@ -103,7 +126,7 @@ export function parseDonationCheckoutForm(formData: FormData) {
   return {
     donor: {
       fullName: readString(formData, "fullName", { required: true, max: 160 })!,
-      email: readString(formData, "email", { required: true, max: 255 })!,
+      email: readEmail(formData),
       phone: readString(formData, "phone", { max: 60 }),
       country: readString(formData, "country", { max: 100 }),
       city: readString(formData, "city", { max: 100 }),
