@@ -24,8 +24,9 @@ const footerLinks = {
         { href: "/zakat", label: "Zakat" },
     ],
     legal: [
-        { href: "/privacy", label: "Privacy" },
+        { href: "/privacy-policy", label: "Privacy" },
         { href: "/terms", label: "Terms" },
+        { href: "/safeguarding", label: "Safeguarding" },
         { href: "/faq", label: "FAQ" },
     ],
 };
