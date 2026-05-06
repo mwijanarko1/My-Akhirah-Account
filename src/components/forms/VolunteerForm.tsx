@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import {
   validateVolunteerDraft,
   mapSubmitError,
@@ -27,6 +27,12 @@ export default function VolunteerForm() {
   const [formError, setFormError] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [honeypotArmed, setHoneypotArmed] = useState(false);
+  const [company, setCompany] = useState("");
+
+  useEffect(() => {
+    setHoneypotArmed(true);
+  }, []);
 
   const setField =
     <K extends keyof VolunteerDraft>(key: K) =>
@@ -60,7 +66,7 @@ export default function VolunteerForm() {
         formData.set("experience", draft.experience.trim());
       }
       formData.set("motivation", draft.motivation.trim());
-      formData.set("company", "");
+      formData.set("company", company);
       formData.set("startedAt", startedAt);
 
       const res = await fetch("/api/volunteer", { method: "POST", body: formData });
@@ -90,7 +96,20 @@ export default function VolunteerForm() {
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-5 max-w-2xl" noValidate aria-label="Volunteer application">
-      <input type="hidden" name="company" value="" />
+      {honeypotArmed ? (
+        <div className="absolute -left-[10000px] top-auto h-px w-px overflow-hidden" aria-hidden="true">
+          <label htmlFor="vol-company">Company</label>
+          <input
+            id="vol-company"
+            name="company"
+            type="text"
+            autoComplete="off"
+            tabIndex={-1}
+            value={company}
+            onChange={(e) => setCompany(e.target.value)}
+          />
+        </div>
+      ) : null}
 
       <div className="grid gap-5 sm:grid-cols-2">
         <div className="sm:col-span-2">
@@ -336,7 +355,7 @@ export default function VolunteerForm() {
         </p>
       ) : null}
 
-      <button type="submit" className="btn btn-secondary font-bold min-h-11 w-full sm:w-auto text-white" disabled={submitting} aria-busy={submitting}>
+      <button type="submit" className="btn btn-primary font-bold min-h-11 w-full sm:w-auto" disabled={submitting} aria-busy={submitting}>
         {submitting ? "Sending…" : "Submit application"}
       </button>
     </form>

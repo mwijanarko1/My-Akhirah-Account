@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import {
   validateContactDraft,
   mapSubmitError,
@@ -23,6 +23,12 @@ export default function ContactForm() {
   const [formError, setFormError] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [honeypotArmed, setHoneypotArmed] = useState(false);
+  const [company, setCompany] = useState("");
+
+  useEffect(() => {
+    setHoneypotArmed(true);
+  }, []);
 
   const setField =
     <K extends keyof ContactDraft>(key: K) =>
@@ -50,7 +56,7 @@ export default function ContactForm() {
       formData.set("phone", draft.phone.trim());
       formData.set("subject", draft.subject.trim());
       formData.set("message", draft.message.trim());
-      formData.set("company", "");
+      formData.set("company", company);
       formData.set("startedAt", startedAt);
 
       const res = await fetch("/api/contact", { method: "POST", body: formData });
@@ -75,7 +81,20 @@ export default function ContactForm() {
       noValidate
       aria-label="Contact form"
     >
-      <input type="hidden" name="company" value="" />
+      {honeypotArmed ? (
+        <div className="absolute -left-[10000px] top-auto h-px w-px overflow-hidden" aria-hidden="true">
+          <label htmlFor="contact-company">Company</label>
+          <input
+            id="contact-company"
+            name="company"
+            type="text"
+            autoComplete="off"
+            tabIndex={-1}
+            value={company}
+            onChange={(e) => setCompany(e.target.value)}
+          />
+        </div>
+      ) : null}
 
       <div>
         <label htmlFor="contact-fullName" className="block text-sm font-semibold text-akhirah-teal mb-1.5">

@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import { validateNewsletterDraft, mapSubmitError, type NewsletterDraft } from "@/lib/validation/formsClient";
 
 const fieldClass =
@@ -18,6 +18,12 @@ export default function NewsletterPageForm({ source = "newsletter-page" }: Newsl
   const [formError, setFormError] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [honeypotArmed, setHoneypotArmed] = useState(false);
+  const [company, setCompany] = useState("");
+
+  useEffect(() => {
+    setHoneypotArmed(true);
+  }, []);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -34,7 +40,7 @@ export default function NewsletterPageForm({ source = "newsletter-page" }: Newsl
       formData.set("email", draft.email.trim());
       formData.set("consentTextVersion", "v1");
       formData.set("source", source);
-      formData.set("company", "");
+      formData.set("company", company);
       formData.set("startedAt", startedAt);
 
       const res = await fetch("/api/newsletter", { method: "POST", body: formData });
@@ -54,7 +60,20 @@ export default function NewsletterPageForm({ source = "newsletter-page" }: Newsl
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-5 max-w-md" noValidate aria-label="Newsletter signup">
-      <input type="hidden" name="company" value="" />
+      {honeypotArmed ? (
+        <div className="absolute -left-[10000px] top-auto h-px w-px overflow-hidden" aria-hidden="true">
+          <label htmlFor="newsletter-company">Company</label>
+          <input
+            id="newsletter-company"
+            name="company"
+            type="text"
+            autoComplete="off"
+            tabIndex={-1}
+            value={company}
+            onChange={(e) => setCompany(e.target.value)}
+          />
+        </div>
+      ) : null}
 
       <div>
         <label htmlFor="newsletter-email-page" className="block text-sm font-semibold text-akhirah-teal mb-1.5">
