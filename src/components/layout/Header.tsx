@@ -7,7 +7,7 @@ import Link from "next/link";
 /** Aligned with `docs/team/tasks/navigation-map.md` and Khalid shared route set */
 const navLinks = [
     { href: "/", label: "Home" },
-    { href: "/about", label: "About" },
+    { href: "/about", label: "About us" },
     { href: "/campaigns", label: "Campaigns" },
     { href: "/programmes", label: "Programmes" },
     { href: "/blog", label: "Blog" },

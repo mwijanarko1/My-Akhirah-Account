@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import PublicPageBodySection from "@/components/layout/PublicPageBodySection";
+import PublicPageCtaFooter from "@/components/layout/PublicPageCtaFooter";
 import PublicPageIntro from "@/components/layout/PublicPageIntro";
 
 export const metadata: Metadata = {
@@ -7,26 +9,88 @@ export const metadata: Metadata = {
     description: "Get in touch with My Akhirah Account.",
 };
 
+const options = [
+    {
+        title: "General enquiries",
+        body: "Questions about donations, receipts, or programmes. We aim to reply within a few working days.",
+        href: "#contact-form",
+        linkLabel: "Jump to message form",
+    },
+    {
+        title: "Volunteering",
+        body: "Warehouse days, events, and remote skills — see roles and how to apply.",
+        href: "/volunteer",
+        linkLabel: "Open volunteer page",
+    },
+    {
+        title: "Media & partnerships",
+        body: "Press, collaborations, or institutional outreach — include “Media enquiry” in your subject when you write.",
+        href: "#contact-form",
+        linkLabel: "Use the message form",
+    },
+] as const;
+
 export default function ContactPage() {
     return (
-        <PublicPageIntro
-            title="Contact us"
-            description='We read every message. For volunteering, see the Volunteer page; for media, use the subject line "Media enquiry" when the form ships in Week 3.'
-        >
-            <div className="rounded-sm border border-akhirah-teal/15 bg-mercy-mint/40 p-6 mb-6">
-                <p className="font-semibold text-akhirah-teal mb-2">Contact form</p>
-                <p className="text-sm text-account-black/80">
-                    The public contact form will be polished in Week 3 (field order, labels, success copy). The API
-                    route already exists at <code className="text-xs">/api/contact</code>.
+        <>
+            <PublicPageIntro
+                eyebrow="Contact"
+                title="Contact us"
+                description="Choose the route that fits your question — every message is read by the team."
+            />
+
+            <PublicPageBodySection surface="mint" spacious>
+                <h2 className="sr-only">Contact options</h2>
+                <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 list-none p-0 m-0">
+                    {options.map((opt) => (
+                        <li
+                            key={opt.title}
+                            className="rounded-sm border border-akhirah-teal/15 bg-purity-white p-5 flex flex-col"
+                        >
+                            <h3 className="text-lg font-bold text-akhirah-teal mb-2">{opt.title}</h3>
+                            <p className="text-sm text-account-black/80 leading-relaxed flex-1 mb-4">{opt.body}</p>
+                            <Link
+                                href={opt.href}
+                                className="text-sm font-semibold text-akhirah-teal underline underline-offset-2 hover:text-eternal-gold"
+                            >
+                                {opt.linkLabel}
+                            </Link>
+                        </li>
+                    ))}
+                </ul>
+            </PublicPageBodySection>
+
+            <PublicPageBodySection surface="white" spacious id="contact-form">
+                <h2 className="text-xl sm:text-2xl font-bold text-akhirah-teal mb-3">Send a message</h2>
+                <p className="text-account-black/80 text-base leading-relaxed mb-6 max-w-2xl">
+                    The public contact form will ship here in Week 3 (field order, labels, and success copy). The API
+                    route is already available at <code className="text-sm font-medium">/api/contact</code>.
                 </p>
-            </div>
-            <p className="text-sm text-account-black/70 mb-4">
-                Until the form is embedded here, reach your team lead on the agreed internal channel for urgent
-                enquiries.
-            </p>
-            <Link href="/volunteer" className="text-akhirah-teal font-semibold underline underline-offset-2">
-                Volunteer with us
-            </Link>
-        </PublicPageIntro>
+                <div
+                    className="rounded-sm border-2 border-dashed border-akhirah-teal/25 bg-mercy-mint/40 px-6 py-12 text-center"
+                    aria-hidden
+                >
+                    <p className="text-sm font-semibold text-akhirah-teal mb-1">Contact form placeholder</p>
+                    <p className="text-xs text-account-black/65">Week 3 — embed form component</p>
+                </div>
+                <p className="mt-6 text-sm text-account-black/70">
+                    For urgent safeguarding concerns, follow the reporting routes described in our{" "}
+                    <Link href="/faq#transparency" className="font-semibold text-akhirah-teal underline underline-offset-2">
+                        transparency FAQs
+                    </Link>
+                    .
+                </p>
+            </PublicPageBodySection>
+
+            <PublicPageCtaFooter
+                title="Prefer self‑serve answers?"
+                description="Many donor questions are covered in our FAQs — volunteering and appeals have dedicated pages too."
+                actions={[
+                    { href: "/faq", label: "Open FAQ", variant: "outlineOnDark" },
+                    { href: "/volunteer", label: "Volunteer with us", variant: "outlineOnDark" },
+                    { href: "/campaigns", label: "View campaigns", variant: "primary" },
+                ]}
+            />
+        </>
     );
 }

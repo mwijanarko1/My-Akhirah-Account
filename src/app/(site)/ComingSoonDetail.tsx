@@ -1,10 +1,12 @@
 import Link from "next/link";
+import PublicPageBodySection from "@/components/layout/PublicPageBodySection";
 import PublicPageIntro from "@/components/layout/PublicPageIntro";
 
 type ComingSoonDetailProps = {
     kind: "Blog post" | "Event" | "Campaign" | "Programme";
     slug: string;
     listHref: string;
+    /** Verb-led label so users know where the link goes */
     listLabel: string;
 };
 
@@ -19,19 +21,20 @@ function titleCaseSlug(slug: string) {
 export default function ComingSoonDetail({ kind, slug, listHref, listLabel }: ComingSoonDetailProps) {
     const readable = titleCaseSlug(slug) || slug;
     return (
-        <PublicPageIntro
-            title={`${kind}: ${readable}`}
-            description="Full content for this page is not published on the preview site yet. You can still browse the main section below."
-        >
-            <div className="flex flex-col sm:flex-row gap-4 items-start">
+        <>
+            <PublicPageIntro
+                title={`${kind}: ${readable}`}
+                description="Full editorial content for this URL will publish from the content system. Until then, use the listing below so visitors never hit a dead end."
+            />
+            <PublicPageBodySection surface="mint">
+                <p className="text-sm text-account-black/75 mb-6">
+                    <span className="font-semibold text-account-black">Preview slug:</span>{" "}
+                    <code className="rounded-sm bg-purity-white px-2 py-1 border border-akhirah-teal/15">{slug}</code>
+                </p>
                 <Link href={listHref} className="btn btn-secondary font-semibold">
                     {listLabel}
                 </Link>
-                <p className="text-sm text-account-black/60">
-                    Slug:{" "}
-                    <code className="rounded-sm bg-mercy-mint px-2 py-1 text-account-black">{slug}</code>
-                </p>
-            </div>
-        </PublicPageIntro>
+            </PublicPageBodySection>
+        </>
     );
 }

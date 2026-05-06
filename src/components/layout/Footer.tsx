@@ -22,8 +22,8 @@ const footerLinks = {
     ],
     involved: [{ href: "/donate", label: "Donate" }],
     legal: [
-        { href: "/privacy", label: "Privacy" },
-        { href: "/terms", label: "Terms" },
+        { href: "/privacy", label: "Privacy policy" },
+        { href: "/terms", label: "Terms of use" },
         { href: "/faq", label: "FAQ" },
     ],
 } as const;
