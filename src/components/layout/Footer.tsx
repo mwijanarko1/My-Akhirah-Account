@@ -103,7 +103,7 @@ export default function Footer() {
                                 onSubmit={handleSubmit}
                                 aria-label="Newsletter subscription form"
                             >
-                                <div className="flex-1">
+                                <div className="flex-1 order-1 sm:order-2">
                                     <label htmlFor="newsletter-email" className="sr-only">
                                         Email address
                                     </label>
@@ -125,7 +125,7 @@ export default function Footer() {
                                 </div>
                                 <button
                                     type="submit"
-                                    className="btn btn-primary whitespace-nowrap font-bold"
+                                    className="btn btn-primary whitespace-nowrap font-bold order-2 sm:order-1"
                                     disabled={status === "submitting"}
                                     aria-busy={status === "submitting"}
                                 >
