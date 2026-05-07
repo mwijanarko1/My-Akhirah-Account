@@ -1,10 +1,13 @@
 import Link from "next/link";
 
+const trustLinkClassName =
+    "font-sans text-base font-medium text-akhirah-teal hover:text-eternal-gold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-akhirah-teal inline-flex min-h-[44px] items-center py-2 underline-offset-4 hover:underline";
+
 const blocks = [
     {
         title: "Transparent Giving",
         body: "We treat every donation as an amanah — a trust we take seriously. Your giving is handled with full accountability and directed to where it is truly needed.",
-        href: "/faq",
+        href: "#transparency",
         linkLabel: "Read answers in our FAQ",
         surface: "white" as const,
     },
@@ -18,7 +21,7 @@ const blocks = [
     {
         title: "Receipts and Updates",
         body: "Upon payment you will receive a receipt straight to your inbox. As campaigns progress, we share updates so you can see the difference your donation is making on the ground.",
-        href: "/faq#receipts",
+        href: "#receipts",
         linkLabel: "Receipts FAQ",
         surface: "white" as const,
     },
@@ -48,12 +51,15 @@ export default function DonorTrustSection() {
                             <p className="font-sans text-base font-normal text-account-black leading-relaxed mb-4">
                                 {block.body}
                             </p>
-                            <Link
-                                href={block.href}
-                                className="font-sans text-base font-medium text-akhirah-teal hover:text-eternal-gold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-akhirah-teal inline-flex min-h-[44px] items-center py-2 underline-offset-4 hover:underline"
-                            >
-                                {block.linkLabel}
-                            </Link>
+                            {block.href.startsWith("#") ? (
+                                <a href={block.href} className={trustLinkClassName}>
+                                    {block.linkLabel}
+                                </a>
+                            ) : (
+                                <Link href={block.href} className={trustLinkClassName}>
+                                    {block.linkLabel}
+                                </Link>
+                            )}
                         </div>
                     ))}
                 </div>

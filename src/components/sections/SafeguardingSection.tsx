@@ -36,13 +36,13 @@ export default function SafeguardingSection() {
                             Our volunteers follow a code of conduct that must be upheld at all times. This ensures we
                             protect the dignity and welfare of those we are helping — which you can read in full below.
                         </p>
-                        {/* TODO: Point to /safeguarding when the dedicated page exists; /faq avoids a 404 for now. */}
-                        <Link
-                            href="/faq"
+                        {/* TODO: Point to /safeguarding when the dedicated page exists; #contact scrolls to FAQ Contact section for now. */}
+                        <a
+                            href="#contact"
                             className="font-sans text-base font-medium text-akhirah-teal hover:text-eternal-gold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-akhirah-teal inline-flex min-h-[44px] items-center py-2 underline-offset-4 hover:underline"
                         >
                             Read our safeguarding policy
-                        </Link>
+                        </a>
                     </div>
 
                     <div className="min-w-0 px-4 py-6 sm:px-6 sm:py-8 bg-purity-white">
@@ -54,13 +54,13 @@ export default function SafeguardingSection() {
                             this belief — ensuring that those we help are treated with the care, respect, and humanity
                             they deserve.
                         </p>
-                        {/* TODO: Point to /safeguarding when the dedicated page exists; /faq avoids a 404 for now. */}
-                        <Link
-                            href="/faq"
+                        {/* TODO: Point to /safeguarding when the dedicated page exists; #transparency scrolls to FAQ Transparency section for now. */}
+                        <a
+                            href="#transparency"
                             className="font-sans text-base font-medium text-akhirah-teal hover:text-eternal-gold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-akhirah-teal inline-flex min-h-[44px] items-center py-2 underline-offset-4 hover:underline"
                         >
                             How we protect welfare in programmes
-                        </Link>
+                        </a>
                     </div>
                 </div>
             </div>

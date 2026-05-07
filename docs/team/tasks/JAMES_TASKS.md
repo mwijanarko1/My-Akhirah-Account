@@ -27,7 +27,7 @@ Primary ownership: FAQ, footer, trust/safeguarding content, simple accessibility
 - [ ] Update `src/components/sections/TrustSection.tsx` copy and structure for clear trust messaging, with calm/trustworthy tone and accessible contrast per `docs/DESIGN.md`.
 - [ ] Build `/faq` with sections for donations, receipts, Zakat/Sadaqah, volunteering, contact, and transparency, following mobile-first layout and readable max-width guidance from `docs/DESIGN.md`.
 - [ ] Add at least 4 FAQ items per section using placeholder answers marked `TODO: Mikhail copy` where final copy is missing; keep copy specific, transparent, and warm (no exaggerated claims).
-- [ ] Add footer links for `/about`, `/campaigns`, `/programmes`, `/blog`, `/events`, `/faq`, `/contact`, `/volunteer`, `/newsletter`, `/privacy-policy`, `/terms`, and `/safeguarding`, with consistent link labeling and hierarchy.
+- [ ] Add footer links for `/about`, `/campaigns`, `/programmes`, `/blog`, `/events`, `/faq`, `/contact`, `/volunteer`, `/newsletter`, `/privacy`, `/terms`, and `/safeguarding`, with consistent link labeling and hierarchy.
 - [ ] Add a trust/safeguarding section below the FAQ that links to `/safeguarding`, `/contact`, and `/volunteer`, styled as a clear trust surface aligned with existing card/button patterns.
 - [ ] Fix footer at 390px width so link groups stack cleanly, text does not overflow, and all interactive targets remain at least 44px high per design/accessibility guidance.
 - [ ] Fix footer at 1440px width so link groups align consistently, no column has awkward wrapping, and spacing rhythm follows the documented scale.

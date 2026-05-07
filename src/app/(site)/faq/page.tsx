@@ -120,7 +120,7 @@ export default function FaqPage() {
                             <article
                                 key={section.id}
                                 id={section.id}
-                                className={`rounded-sm border border-akhirah-teal/15 p-5 sm:p-6 md:p-8 ${
+                                className={`scroll-mt-28 md:scroll-mt-32 rounded-sm border border-akhirah-teal/15 p-5 sm:p-6 md:p-8 ${
                                     index % 2 === 1 ? "bg-mercy-mint/40" : "bg-purity-white"
                                 }`}
                             >
@@ -177,13 +177,13 @@ export default function FaqPage() {
                             for every supporter, volunteer, and beneficiary.
                         </p>
                         <div className="flex flex-col sm:flex-row sm:flex-wrap gap-3">
-                            {/* TODO: Point to /safeguarding when the dedicated page exists; /faq avoids a 404 for now. */}
-                            <Link
-                                href="/faq"
+                            {/* TODO: Point to /safeguarding when the dedicated page exists; #contact scrolls to FAQ Contact section for now. */}
+                            <a
+                                href="#contact"
                                 className="inline-flex min-h-11 items-center justify-center rounded-sm border border-white/30 px-4 py-2 text-purity-white hover:text-eternal-gold hover:border-eternal-gold transition-colors"
                             >
                                 Safeguarding Policy
-                            </Link>
+                            </a>
                             <Link
                                 href="/contact"
                                 className="inline-flex min-h-11 items-center justify-center rounded-sm border border-white/30 px-4 py-2 text-purity-white hover:text-eternal-gold hover:border-eternal-gold transition-colors"
