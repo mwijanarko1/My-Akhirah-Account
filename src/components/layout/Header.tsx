@@ -138,7 +138,7 @@ export default function Header({ transparentAtTop = false }: HeaderProps) {
                                 <Link
                                     key={link.href}
                                     href={link.href}
-                                    className="whitespace-nowrap text-[0.7rem] font-semibold text-white/95 sm:text-[0.75rem] xl:text-[0.8125rem] hover:text-eternal-gold transition-colors"
+                                    className="whitespace-nowrap text-[0.7rem] font-semibold text-white/95 sm:text-[0.75rem] xl:text-[0.8125rem] hover:text-eternal-gold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-eternal-gold"
                                 >
                                     {link.label}
                                 </Link>
@@ -198,7 +198,7 @@ export default function Header({ transparentAtTop = false }: HeaderProps) {
                                         key={link.href}
                                         href={link.href}
                                         ref={index === 0 ? firstFocusableRef : undefined}
-                                        className="px-3 py-3 text-base font-semibold text-white/95 hover:bg-white/10 rounded-sm transition-colors"
+                                        className="px-3 py-3 text-base font-semibold text-white/95 hover:bg-white/10 rounded-sm transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-eternal-gold"
                                         onClick={() => setIsMenuOpen(false)}
                                     >
                                         {link.label}

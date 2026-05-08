@@ -1,285 +1,363 @@
 "use client";
 
-import { FormEvent, useMemo, useState } from "react";
-import { formFieldErrorClass, formFieldHintClass, formFieldInputClass, formFieldLabelClass } from "@/components/forms/formFieldClasses";
-import { humanizePublicFormError, readPublicFormErrorMessage } from "@/lib/forms/publicFormMessages";
+import { FormEvent, useEffect, useMemo, useState } from "react";
+import {
+  validateVolunteerDraft,
+  mapSubmitError,
+  type VolunteerDraft,
+} from "@/lib/validation/formsClient";
 
-const INTEREST_OPTIONS = [
-    { value: "On-site logistics", description: "Warehouse packing, distributions, on-the-ground prep." },
-    { value: "Community events", description: "Outreach booths, greeting donors, local gatherings." },
-    { value: "Remote support", description: "Design, translation, comms, or screened admin help." },
-    { value: "Other skills", description: "Anything else you’d like us to consider." },
-] as const;
-
-const AVAILABILITY_OPTIONS = [
-    { value: "Weekday daytime", label: "Weekday daytime" },
-    { value: "Weekday evenings", label: "Weekday evenings" },
-    { value: "Weekends", label: "Weekends" },
-    { value: "Flexible / variable", label: "Flexible / variable" },
-] as const;
+const fieldClass =
+  "min-h-11 w-full px-4 py-3 text-base rounded-sm border border-akhirah-teal/15 bg-purity-white text-account-black placeholder:text-account-black/40 focus:outline-none focus:ring-2 focus:ring-eternal-gold";
 
 export default function VolunteerForm() {
-    const startedAt = useMemo(() => Date.now().toString(), []);
-    const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
-    const [interestError, setInterestError] = useState("");
-    const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
-    const [errorMessage, setErrorMessage] = useState("");
+  const startedAt = useMemo(() => String(Date.now()), []);
+  const [draft, setDraft] = useState<VolunteerDraft>({
+    fullName: "",
+    email: "",
+    phone: "",
+    country: "",
+    city: "",
+    interestsRaw: "",
+    availability: "",
+    experience: "",
+    motivation: "",
+  });
+  const [errors, setErrors] = useState<Partial<Record<keyof VolunteerDraft, string>>>({});
+  const [formError, setFormError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [honeypotArmed, setHoneypotArmed] = useState(false);
+  const [company, setCompany] = useState("");
 
-    const toggleInterest = (value: string) => {
-        setInterestError("");
-        setSelectedInterests((prev) => (prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value]));
+  useEffect(() => {
+    setHoneypotArmed(true);
+  }, []);
+
+  const setField =
+    <K extends keyof VolunteerDraft>(key: K) =>
+    (value: VolunteerDraft[K]) => {
+      setDraft((prev) => ({ ...prev, [key]: value }));
+      setErrors((prev) => ({ ...prev, [key]: undefined }));
+      setFormError("");
+      setSuccess(false);
     };
 
-    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        setInterestError("");
-        setErrorMessage("");
+  async function handleSubmit(e: FormEvent) {
+    e.preventDefault();
+    setFormError("");
+    setSuccess(false);
 
-        if (selectedInterests.length === 0) {
-            setInterestError("Choose at least one way you’d like to help.");
-            return;
-        }
+    const next = validateVolunteerDraft(draft);
+    setErrors(next);
+    if (Object.keys(next).length > 0) return;
 
-        const form = e.currentTarget;
-        const formData = new FormData(form);
-        formData.set("interests", selectedInterests.join(", "));
-        setStatus("submitting");
+    setSubmitting(true);
+    try {
+      const formData = new FormData();
+      formData.set("fullName", draft.fullName.trim());
+      formData.set("email", draft.email.trim());
+      formData.set("phone", draft.phone.trim());
+      formData.set("country", draft.country.trim());
+      formData.set("city", draft.city.trim());
+      formData.set("interests", draft.interestsRaw.trim());
+      formData.set("availability", draft.availability.trim());
+      if (draft.experience.trim()) {
+        formData.set("experience", draft.experience.trim());
+      }
+      formData.set("motivation", draft.motivation.trim());
+      formData.set("company", company);
+      formData.set("startedAt", startedAt);
 
-        try {
-            const response = await fetch("/api/volunteer", {
-                method: "POST",
-                body: formData,
-            });
-            if (!response.ok) {
-                const msg = await readPublicFormErrorMessage(response);
-                throw new Error(msg);
-            }
-            setStatus("success");
-            form.reset();
-            setSelectedInterests([]);
-        } catch (err) {
-            setStatus("error");
-            setErrorMessage(humanizePublicFormError(err instanceof Error ? err.message : ""));
-        }
-    };
+      const res = await fetch("/api/volunteer", { method: "POST", body: formData });
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setFormError(mapSubmitError(body));
+        return;
+      }
+      setSuccess(true);
+      setDraft({
+        fullName: "",
+        email: "",
+        phone: "",
+        country: "",
+        city: "",
+        interestsRaw: "",
+        availability: "",
+        experience: "",
+        motivation: "",
+      });
+    } catch {
+      setFormError("Unable to submit right now.");
+    } finally {
+      setSubmitting(false);
+    }
+  }
 
-    const disabled = status === "submitting";
-
-    return (
-        <div className="max-w-2xl">
-            <form
-                className="space-y-8 sm:space-y-10"
-                onSubmit={handleSubmit}
-                aria-describedby={
-                    interestError ? "volunteer-interests-error" : status === "error" ? "volunteer-form-error" : undefined
-                }
-                noValidate
-            >
-                <input type="hidden" name="startedAt" value={startedAt} />
-                <input type="hidden" name="company" value="" />
-
-                <fieldset className="space-y-5 sm:space-y-6 border-0 p-0 m-0">
-                    <legend className="text-lg font-bold text-akhirah-teal mb-4 sm:mb-5">Your details</legend>
-
-                    <div className="grid gap-5 sm:grid-cols-2 sm:gap-x-6">
-                        <div>
-                            <label htmlFor="vol-fullName" className={formFieldLabelClass}>
-                                Full name <span className="text-red-700">*</span>
-                            </label>
-                            <input
-                                id="vol-fullName"
-                                name="fullName"
-                                type="text"
-                                required
-                                autoComplete="name"
-                                maxLength={160}
-                                disabled={disabled}
-                                className={formFieldInputClass}
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="vol-email" className={formFieldLabelClass}>
-                                Email <span className="text-red-700">*</span>
-                            </label>
-                            <input
-                                id="vol-email"
-                                name="email"
-                                type="email"
-                                required
-                                autoComplete="email"
-                                maxLength={255}
-                                disabled={disabled}
-                                className={formFieldInputClass}
-                            />
-                        </div>
-                    </div>
-
-                    <div>
-                        <label htmlFor="vol-phone" className={formFieldLabelClass}>
-                            Phone <span className="text-red-700">*</span>
-                        </label>
-                        <input
-                            id="vol-phone"
-                            name="phone"
-                            type="tel"
-                            required
-                            autoComplete="tel"
-                            maxLength={60}
-                            disabled={disabled}
-                            className={formFieldInputClass}
-                            placeholder="Best number for volunteer coordination"
-                        />
-                    </div>
-
-                    <div className="grid gap-5 sm:grid-cols-2 sm:gap-x-6">
-                        <div>
-                            <label htmlFor="vol-country" className={formFieldLabelClass}>
-                                Country <span className="text-red-700">*</span>
-                            </label>
-                            <input
-                                id="vol-country"
-                                name="country"
-                                type="text"
-                                required
-                                autoComplete="country-name"
-                                maxLength={100}
-                                disabled={disabled}
-                                className={formFieldInputClass}
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="vol-city" className={formFieldLabelClass}>
-                                City / town <span className="text-red-700">*</span>
-                            </label>
-                            <input
-                                id="vol-city"
-                                name="city"
-                                type="text"
-                                required
-                                autoComplete="address-level2"
-                                maxLength={100}
-                                disabled={disabled}
-                                className={formFieldInputClass}
-                            />
-                        </div>
-                    </div>
-                </fieldset>
-
-                <fieldset className="space-y-4 border-0 p-0 m-0">
-                    <legend className="text-lg font-bold text-akhirah-teal mb-2">How you&apos;d like to help</legend>
-                    <p className={`${formFieldHintClass} mb-3`}>Select every option that fits — we&apos;ll follow up with roles that match.</p>
-                    <div className="grid gap-3 sm:gap-4">
-                        {INTEREST_OPTIONS.map((opt) => {
-                            const id = `vol-interest-${opt.value.replace(/\s+/g, "-").toLowerCase()}`;
-                            const checked = selectedInterests.includes(opt.value);
-                            return (
-                                <label
-                                    key={opt.value}
-                                    htmlFor={id}
-                                    className={`flex gap-3 rounded-sm border-2 p-4 cursor-pointer transition-colors ${
-                                        checked ? "border-akhirah-teal bg-mercy-mint/50" : "border-akhirah-teal/15 bg-purity-white"
-                                    } ${disabled ? "opacity-60 cursor-not-allowed" : "hover:border-akhirah-teal/40"}`}
-                                >
-                                    <input
-                                        id={id}
-                                        type="checkbox"
-                                        checked={checked}
-                                        disabled={disabled}
-                                        onChange={() => toggleInterest(opt.value)}
-                                        className="mt-1 h-4 w-4 shrink-0 rounded-sm border-akhirah-teal/40 text-akhirah-teal focus:ring-akhirah-teal"
-                                    />
-                                    <span>
-                                        <span className="block text-sm font-semibold text-account-black">{opt.value}</span>
-                                        <span className="block text-xs text-account-black/65 mt-0.5 leading-snug">{opt.description}</span>
-                                    </span>
-                                </label>
-                            );
-                        })}
-                    </div>
-                    {interestError ? (
-                        <p id="volunteer-interests-error" className={formFieldErrorClass} role="alert">
-                            {interestError}
-                        </p>
-                    ) : null}
-                </fieldset>
-
-                <div>
-                    <label htmlFor="vol-availability" className={formFieldLabelClass}>
-                        Typical availability <span className="text-red-700">*</span>
-                    </label>
-                    <select
-                        id="vol-availability"
-                        name="availability"
-                        required
-                        disabled={disabled}
-                        className={formFieldInputClass}
-                        defaultValue=""
-                    >
-                        <option value="" disabled>
-                            Choose an option
-                        </option>
-                        {AVAILABILITY_OPTIONS.map((o) => (
-                            <option key={o.value} value={o.value}>
-                                {o.label}
-                            </option>
-                        ))}
-                    </select>
-                </div>
-
-                <div>
-                    <label htmlFor="vol-experience" className={formFieldLabelClass}>
-                        Relevant experience <span className="text-account-black/55 font-normal">(optional)</span>
-                    </label>
-                    <textarea
-                        id="vol-experience"
-                        name="experience"
-                        rows={4}
-                        maxLength={4000}
-                        disabled={disabled}
-                        className={`${formFieldInputClass} min-h-[100px] resize-y`}
-                        placeholder="Skills, certifications, or similar volunteering — helps us match you faster."
-                    />
-                    <p className={formFieldHintClass}>Up to 4,000 characters.</p>
-                </div>
-
-                <div>
-                    <label htmlFor="vol-motivation" className={formFieldLabelClass}>
-                        Why do you want to volunteer with us? <span className="text-red-700">*</span>
-                    </label>
-                    <textarea
-                        id="vol-motivation"
-                        name="motivation"
-                        required
-                        rows={5}
-                        maxLength={4000}
-                        disabled={disabled}
-                        className={`${formFieldInputClass} min-h-[120px] resize-y`}
-                        placeholder="A few sentences is plenty — we’d love to hear what drew you to My Akhirah Account."
-                    />
-                    <p className={formFieldHintClass}>Up to 4,000 characters.</p>
-                </div>
-
-                <div className="flex flex-col sm:flex-row sm:items-center gap-4 pt-1">
-                    <button type="submit" className="btn btn-primary font-bold w-full sm:w-auto min-h-11 px-8" disabled={disabled} aria-busy={disabled}>
-                        {disabled ? "Submitting application…" : "Submit application"}
-                    </button>
-                    <p className="text-xs text-account-black/60 leading-snug sm:max-w-sm">
-                        We&apos;ll only use these details to assess volunteering roles and respond to you, as described in our privacy policy.
-                    </p>
-                </div>
-            </form>
-
-            {status === "success" && (
-                <p className="mt-6 text-sm sm:text-base text-akhirah-teal font-semibold leading-relaxed" role="status">
-                    Application received — thank you. The team will email you when there&apos;s a suitable opportunity or if we need more
-                    detail. If you don&apos;t hear back within two weeks, message us through the contact page.
-                </p>
-            )}
-            {status === "error" && (
-                <p id="volunteer-form-error" className={`mt-6 ${formFieldErrorClass}`} role="alert">
-                    {errorMessage}
-                </p>
-            )}
+  return (
+    <form onSubmit={handleSubmit} className="flex flex-col gap-5 max-w-2xl" noValidate aria-label="Volunteer application">
+      {honeypotArmed ? (
+        <div className="absolute -left-[10000px] top-auto h-px w-px overflow-hidden" aria-hidden="true">
+          <label htmlFor="vol-company">Company</label>
+          <input
+            id="vol-company"
+            name="company"
+            type="text"
+            autoComplete="off"
+            tabIndex={-1}
+            value={company}
+            onChange={(e) => setCompany(e.target.value)}
+          />
         </div>
-    );
+      ) : null}
+
+      <div className="grid gap-5 sm:grid-cols-2">
+        <div className="sm:col-span-2">
+          <label htmlFor="vol-fullName" className="block text-sm font-semibold text-akhirah-teal mb-1.5">
+            Full name <span className="text-red-700">*</span>
+          </label>
+          <input
+            id="vol-fullName"
+            name="fullName"
+            type="text"
+            autoComplete="name"
+            required
+            maxLength={160}
+            className={fieldClass}
+            value={draft.fullName}
+            onChange={(e) => setField("fullName")(e.target.value)}
+            disabled={submitting}
+            aria-invalid={Boolean(errors.fullName)}
+            aria-describedby={errors.fullName ? "vol-fullName-err" : undefined}
+          />
+          {errors.fullName ? (
+            <p id="vol-fullName-err" className="mt-1.5 text-sm text-red-600" role="alert">
+              {errors.fullName}
+            </p>
+          ) : null}
+        </div>
+
+        <div>
+          <label htmlFor="vol-email" className="block text-sm font-semibold text-akhirah-teal mb-1.5">
+            Email <span className="text-red-700">*</span>
+          </label>
+          <input
+            id="vol-email"
+            name="email"
+            type="email"
+            autoComplete="email"
+            required
+            maxLength={255}
+            className={fieldClass}
+            value={draft.email}
+            onChange={(e) => setField("email")(e.target.value)}
+            disabled={submitting}
+            aria-invalid={Boolean(errors.email)}
+            aria-describedby={errors.email ? "vol-email-err" : undefined}
+          />
+          {errors.email ? (
+            <p id="vol-email-err" className="mt-1.5 text-sm text-red-600" role="alert">
+              {errors.email}
+            </p>
+          ) : null}
+        </div>
+
+        <div>
+          <label htmlFor="vol-phone" className="block text-sm font-semibold text-akhirah-teal mb-1.5">
+            Phone <span className="text-red-700">*</span>
+          </label>
+          <input
+            id="vol-phone"
+            name="phone"
+            type="tel"
+            autoComplete="tel"
+            required
+            maxLength={60}
+            className={fieldClass}
+            value={draft.phone}
+            onChange={(e) => setField("phone")(e.target.value)}
+            disabled={submitting}
+            aria-invalid={Boolean(errors.phone)}
+            aria-describedby={errors.phone ? "vol-phone-err" : undefined}
+          />
+          {errors.phone ? (
+            <p id="vol-phone-err" className="mt-1.5 text-sm text-red-600" role="alert">
+              {errors.phone}
+            </p>
+          ) : null}
+        </div>
+
+        <div>
+          <label htmlFor="vol-country" className="block text-sm font-semibold text-akhirah-teal mb-1.5">
+            Country <span className="text-red-700">*</span>
+          </label>
+          <input
+            id="vol-country"
+            name="country"
+            type="text"
+            autoComplete="country-name"
+            required
+            maxLength={100}
+            className={fieldClass}
+            value={draft.country}
+            onChange={(e) => setField("country")(e.target.value)}
+            disabled={submitting}
+            aria-invalid={Boolean(errors.country)}
+            aria-describedby={errors.country ? "vol-country-err" : undefined}
+          />
+          {errors.country ? (
+            <p id="vol-country-err" className="mt-1.5 text-sm text-red-600" role="alert">
+              {errors.country}
+            </p>
+          ) : null}
+        </div>
+
+        <div>
+          <label htmlFor="vol-city" className="block text-sm font-semibold text-akhirah-teal mb-1.5">
+            City <span className="text-red-700">*</span>
+          </label>
+          <input
+            id="vol-city"
+            name="city"
+            type="text"
+            autoComplete="address-level2"
+            required
+            maxLength={100}
+            className={fieldClass}
+            value={draft.city}
+            onChange={(e) => setField("city")(e.target.value)}
+            disabled={submitting}
+            aria-invalid={Boolean(errors.city)}
+            aria-describedby={errors.city ? "vol-city-err" : undefined}
+          />
+          {errors.city ? (
+            <p id="vol-city-err" className="mt-1.5 text-sm text-red-600" role="alert">
+              {errors.city}
+            </p>
+          ) : null}
+        </div>
+      </div>
+
+      <div>
+        <label htmlFor="vol-interests" className="block text-sm font-semibold text-akhirah-teal mb-1.5">
+          Interests <span className="text-red-700">*</span>
+        </label>
+        <textarea
+          id="vol-interests"
+          name="interests"
+          rows={3}
+          autoComplete="off"
+          placeholder="School builds, distributions, volunteering locally, translations…"
+          maxLength={600}
+          required
+          className={`${fieldClass} min-h-[5.5rem] resize-y`}
+          value={draft.interestsRaw}
+          onChange={(e) => setField("interestsRaw")(e.target.value)}
+          disabled={submitting}
+          aria-invalid={Boolean(errors.interestsRaw)}
+          aria-describedby={errors.interestsRaw ? "vol-interests-err" : undefined}
+        />
+        {errors.interestsRaw ? (
+          <p id="vol-interests-err" className="mt-1.5 text-sm text-red-600" role="alert">
+            {errors.interestsRaw}
+          </p>
+        ) : (
+          <p className="mt-1 text-xs text-account-black/55">Separate multiple interests with commas (max 600 characters total).</p>
+        )}
+      </div>
+
+      <div>
+        <label htmlFor="vol-availability" className="block text-sm font-semibold text-akhirah-teal mb-1.5">
+          Availability <span className="text-red-700">*</span>
+        </label>
+        <input
+          id="vol-availability"
+          name="availability"
+          type="text"
+          autoComplete="off"
+          maxLength={200}
+          required
+          className={fieldClass}
+          value={draft.availability}
+          onChange={(e) => setField("availability")(e.target.value)}
+          disabled={submitting}
+          aria-invalid={Boolean(errors.availability)}
+          aria-describedby={errors.availability ? "vol-availability-err" : undefined}
+        />
+        {errors.availability ? (
+          <p id="vol-availability-err" className="mt-1.5 text-sm text-red-600" role="alert">
+            {errors.availability}
+          </p>
+        ) : (
+          <p className="mt-1 text-xs text-account-black/55">Examples: weekdays after 17:00, weekends, term breaks.</p>
+        )}
+      </div>
+
+      <div>
+        <label htmlFor="vol-experience" className="block text-sm font-semibold text-akhirah-teal mb-1.5">
+          Relevant experience
+        </label>
+        <textarea
+          id="vol-experience"
+          name="experience"
+          rows={4}
+          autoComplete="off"
+          maxLength={4000}
+          className={`${fieldClass} min-h-[7rem] resize-y`}
+          value={draft.experience}
+          onChange={(e) => setField("experience")(e.target.value)}
+          disabled={submitting}
+          aria-invalid={Boolean(errors.experience)}
+          aria-describedby={errors.experience ? "vol-experience-err" : undefined}
+        />
+        {errors.experience ? (
+          <p id="vol-experience-err" className="mt-1.5 text-sm text-red-600" role="alert">
+            {errors.experience}
+          </p>
+        ) : null}
+      </div>
+
+      <div>
+        <label htmlFor="vol-motivation" className="block text-sm font-semibold text-akhirah-teal mb-1.5">
+          Why you want to volunteer <span className="text-red-700">*</span>
+        </label>
+        <textarea
+          id="vol-motivation"
+          name="motivation"
+          rows={5}
+          autoComplete="off"
+          required
+          maxLength={4000}
+          className={`${fieldClass} min-h-[8rem] resize-y`}
+          value={draft.motivation}
+          onChange={(e) => setField("motivation")(e.target.value)}
+          disabled={submitting}
+          aria-invalid={Boolean(errors.motivation)}
+          aria-describedby={errors.motivation ? "vol-motivation-err" : undefined}
+        />
+        {errors.motivation ? (
+          <p id="vol-motivation-err" className="mt-1.5 text-sm text-red-600" role="alert">
+            {errors.motivation}
+          </p>
+        ) : null}
+      </div>
+
+      <input type="hidden" name="startedAt" value={startedAt} readOnly />
+
+      {formError ? (
+        <p className="text-sm text-red-600" role="alert">
+          {formError}
+        </p>
+      ) : null}
+      {success ? (
+        <p className="text-sm font-semibold text-akhirah-teal" role="status">
+          Thank you — we received your application.
+        </p>
+      ) : null}
+
+      <button type="submit" className="btn btn-primary font-bold min-h-11 w-full sm:w-auto" disabled={submitting} aria-busy={submitting}>
+        {submitting ? "Sending…" : "Submit application"}
+      </button>
+    </form>
+  );
 }

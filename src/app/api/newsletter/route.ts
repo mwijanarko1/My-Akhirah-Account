@@ -5,6 +5,28 @@ import { runConvexMutation } from "@/lib/server/convex";
 import { consumeRateLimit, getClientIp, hashIp } from "@/lib/server/security";
 import { parseNewsletterForm, verifyHoneypot, verifySubmissionDelay } from "@/lib/validation/forms";
 
+const SAFE_ERRORS = [
+  "Spam detected",
+  "Submission too fast",
+  "Submission expired",
+  "Missing startedAt",
+  "Invalid startedAt",
+  "Invalid email format",
+];
+
+function getSafeErrorMessage(error: unknown): string {
+  if (!(error instanceof Error)) {
+    return "Unable to submit right now.";
+  }
+  if (error.message.startsWith("Missing ") || error.message.endsWith(" is too long")) {
+    return error.message;
+  }
+  if (SAFE_ERRORS.includes(error.message)) {
+    return error.message;
+  }
+  return "Unable to submit right now.";
+}
+
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
@@ -28,7 +50,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(result);
   } catch (error) {
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Unable to subscribe right now." },
+      { error: getSafeErrorMessage(error) },
       { status: 400 },
     );
   }

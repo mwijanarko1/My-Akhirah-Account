@@ -1,8 +1,8 @@
 "use client";
 
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import { formFieldHintClass, formFieldInputClass, formFieldLabelClass } from "@/components/forms/formFieldClasses";
-import { humanizePublicFormError, readPublicFormErrorMessage } from "@/lib/forms/publicFormMessages";
+import { mapSubmitError, validateNewsletterDraft } from "@/lib/validation/formsClient";
 
 type NewsletterSubscribeFormProps = {
     /** Sent to `/api/newsletter` as `source` for analytics */
@@ -22,6 +22,12 @@ export default function NewsletterSubscribeForm({
     const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
     const [errorMessage, setErrorMessage] = useState("");
     const startedAt = useMemo(() => Date.now().toString(), []);
+    const [honeypotArmed, setHoneypotArmed] = useState(false);
+    const [company, setCompany] = useState("");
+
+    useEffect(() => {
+        setHoneypotArmed(true);
+    }, []);
 
     const labelClass =
         surface === "dark" ? "block text-sm font-semibold text-white mb-1.5" : formFieldLabelClass;
@@ -30,30 +36,38 @@ export default function NewsletterSubscribeForm({
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
+        const validation = validateNewsletterDraft({ email });
+        if (validation.email) {
+            setStatus("error");
+            setErrorMessage(validation.email);
+            return;
+        }
         setStatus("submitting");
         setErrorMessage("");
 
         try {
             const formData = new FormData();
-            formData.set("email", email);
+            formData.set("email", email.trim());
             formData.set("consentTextVersion", "v1");
             formData.set("source", source);
-            formData.set("company", "");
+            formData.set("company", company);
             formData.set("startedAt", startedAt);
 
             const response = await fetch("/api/newsletter", {
                 method: "POST",
                 body: formData,
             });
+            const body = await response.json().catch(() => ({}));
             if (!response.ok) {
-                const msg = await readPublicFormErrorMessage(response);
-                throw new Error(msg);
+                setStatus("error");
+                setErrorMessage(mapSubmitError(body));
+                return;
             }
             setStatus("success");
             setEmail("");
-        } catch (err) {
+        } catch {
             setStatus("error");
-            setErrorMessage(humanizePublicFormError(err instanceof Error ? err.message : ""));
+            setErrorMessage("Unable to submit right now.");
         }
     };
 
@@ -78,7 +92,7 @@ export default function NewsletterSubscribeForm({
     return (
         <div className="max-w-lg">
             <form className={formClass} onSubmit={handleSubmit} aria-label="Newsletter subscription form" noValidate>
-                <div className="flex-1 min-w-0">
+                <div className="flex-1 min-w-0 relative">
                     <label htmlFor={emailId} className={labelClass}>
                         Email address
                     </label>
@@ -88,9 +102,16 @@ export default function NewsletterSubscribeForm({
                         className={formFieldInputClass}
                         required
                         autoComplete="email"
+                        maxLength={255}
                         name="email"
                         value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        onChange={(e) => {
+                            setEmail(e.target.value);
+                            if (status === "error") {
+                                setStatus("idle");
+                                setErrorMessage("");
+                            }
+                        }}
                         disabled={status === "submitting"}
                         placeholder="you@example.com"
                         aria-invalid={status === "error"}
@@ -99,6 +120,21 @@ export default function NewsletterSubscribeForm({
                     <p id={`${emailId}-hint`} className={hintClass}>
                         Occasional updates only — unsubscribe anytime. See our privacy policy for how we store your email.
                     </p>
+                    {honeypotArmed ? (
+                        <div className="absolute -left-[10000px] top-auto h-px w-px overflow-hidden" aria-hidden="true">
+                            <label htmlFor={`newsletter-company-${source}`}>Company</label>
+                            <input
+                                id={`newsletter-company-${source}`}
+                                name="company"
+                                type="text"
+                                autoComplete="off"
+                                tabIndex={-1}
+                                value={company}
+                                onChange={(e) => setCompany(e.target.value)}
+                            />
+                        </div>
+                    ) : null}
+                    <input type="hidden" name="startedAt" value={startedAt} readOnly />
                 </div>
                 <button
                     type="submit"
