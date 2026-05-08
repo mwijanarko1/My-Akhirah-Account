@@ -1,7 +1,7 @@
 # Navigation & public route map
 
 Owner: Khalid (public nav & layout — Week 1 route map, Week 2 structure pass).  
-Last updated: 2026-05-06.
+Last updated: 2026-05-06 (Week 3 form UX pass).
 
 This document is the single source of truth for **header/footer routes**, **homepage section order**, and **policy placeholders** pending final copy from Mikhail.
 
@@ -20,8 +20,8 @@ These URLs are the **only** primary destinations we ship in global navigation (a
 | `/blog` | Articles & updates |
 | `/events` | Events calendar & event detail |
 | `/faq` | Frequently asked questions |
-| `/contact` | Contact options & enquiry (form polish Week 3) |
-| `/volunteer` | Volunteer information & application entry |
+| `/contact` | Contact options & enquiry form (`ContactForm`) |
+| `/volunteer` | Volunteer information & application form (`VolunteerForm`) |
 | `/newsletter` | Dedicated signup context + form |
 
 **Policies (legal):** `/privacy`, `/terms` (linked from footer **Legal**). FAQ lives at `/faq` (not only inside legal).
@@ -68,7 +68,7 @@ Mobile drawer ends with primary **Donate** CTA → `/donate` (unchanged behaviou
 |------|----------------|---------------------|
 | Governance | `/privacy` | Mikhail: board structure, policies index, PDFs or Notion links |
 | Annual reports | `/terms` | **Placeholder routing** — replace with `/reports` or dedicated URL when reports ship; body copy TBD |
-| Safeguarding | `/faq` | **Placeholder** — should become `/safeguarding` or FAQ section with reporting routes; copy TBD |
+| Safeguarding | `/faq#transparency` | Deep-link to FAQ transparency section until `/safeguarding` or dedicated asset ships; copy TBD |
 
 > **Blocker for Mikhail:** confirm final URLs for reports & safeguarding (keep or replace placeholders above).
 
@@ -127,3 +127,5 @@ Until CMS-driven pages exist, each slug renders a **thin placeholder** (intro + 
 - **2026-05-01:** Initial map + route implementation in app router `(site)` group, header/footer alignment, homepage `viewAllHref` fix (`/projects` → `/programmes`), mock impact card hrefs → `/programmes/...`, homepage fallback banner CTA (`/fundraise` → `/campaigns`), default hero secondary CTA (`/zakat` → `/faq`). Convex-backed homepage copy may still override these when present in the database.
 
 - **2026-05-06 (Week 2 — Khalid):** Shared public layout pieces (`PublicPageBodySection`, `PublicPageCtaFooter`, eyebrow on `PublicPageIntro`); single `<main>` via `(site)/layout.tsx`; aligned labels (**About us** in header; footer legal **Privacy policy** / **Terms of use**); restructured About, Programmes, Contact, Policies, Blog/Events/Newsletter/Volunteer/Donate pages into intro → body → CTA; FAQ footer CTAs fixed (no `/safeguarding` 404 → `#transparency`); clearer verb-led links across listing/detail placeholders.
+
+- **2026-05-06 (Week 3 — Khalid):** Contact (`ContactForm`) and volunteer (`VolunteerForm`) UIs wired to existing API routes; newsletter signup labels, helper copy, and API error mapping improved (`NewsletterSubscribeForm`); footer safeguarding tile → `/faq#transparency`; FAQ sections use `scroll-mt-24` for hash navigation; blog/events listing primary CTAs full-width on small screens. Broken-link audit: `docs/team/tasks/WEEK3_BROKEN_LINK_AUDIT.md`.

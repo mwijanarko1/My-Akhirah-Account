@@ -48,14 +48,14 @@ Primary ownership: public route structure, navigation clarity, policy/about/prog
 
 ## Week 3: Form UX and Cross-Page QA
 
-- [ ] Fix contact form UX issues (field order, spacing, and button clarity).
-- [ ] Fix volunteer form UX issues (field grouping, readability, and submit flow).
-- [ ] Fix newsletter signup UX issues (input clarity and submit feedback).
-- [ ] Add missing labels/helper text to all form fields you touch.
-- [ ] Add clear success and error copy for all form submissions you touch.
-- [ ] Fix mobile layout issues found across assigned public pages.
-- [ ] Fix desktop layout issues found across assigned public pages.
-- [ ] Create a broken-link list with source page + broken URL + intended destination, then fix all links in your scope.
+- [x] Fix contact form UX issues (field order, spacing, and button clarity).
+- [x] Fix volunteer form UX issues (field grouping, readability, and submit flow).
+- [x] Fix newsletter signup UX issues (input clarity and submit feedback).
+- [x] Add missing labels/helper text to all form fields you touch.
+- [x] Add clear success and error copy for all form submissions you touch.
+- [x] Fix mobile layout issues found across assigned public pages.
+- [x] Fix desktop layout issues found across assigned public pages.
+- [x] Create a broken-link list with source page + broken URL + intended destination, then fix all links in your scope.
 - [ ] Open a PR for form UX and public page polish assigned to you.
 
 ## Week 4: Final Navigation and Content QA

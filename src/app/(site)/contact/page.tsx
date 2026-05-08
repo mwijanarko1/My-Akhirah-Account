@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import ContactForm from "@/components/forms/ContactForm";
 import PublicPageBodySection from "@/components/layout/PublicPageBodySection";
 import PublicPageCtaFooter from "@/components/layout/PublicPageCtaFooter";
 import PublicPageIntro from "@/components/layout/PublicPageIntro";
@@ -62,18 +63,14 @@ export default function ContactPage() {
 
             <PublicPageBodySection surface="white" spacious id="contact-form">
                 <h2 className="text-xl sm:text-2xl font-bold text-akhirah-teal mb-3">Send a message</h2>
-                <p className="text-account-black/80 text-base leading-relaxed mb-6 max-w-2xl">
-                    The public contact form will ship here in Week 3 (field order, labels, and success copy). The API
-                    route is already available at <code className="text-sm font-medium">/api/contact</code>.
+                <p className="text-account-black/80 text-base leading-relaxed mb-8 max-w-2xl">
+                    Use this form for general enquiries, media requests, and partnership outreach. Fields marked with an asterisk (*) are
+                    required.
                 </p>
-                <div
-                    className="rounded-sm border-2 border-dashed border-akhirah-teal/25 bg-mercy-mint/40 px-6 py-12 text-center"
-                    aria-hidden
-                >
-                    <p className="text-sm font-semibold text-akhirah-teal mb-1">Contact form placeholder</p>
-                    <p className="text-xs text-account-black/65">Week 3 — embed form component</p>
+                <div className="rounded-sm border border-akhirah-teal/15 bg-mercy-mint/25 p-5 sm:p-8 md:p-10">
+                    <ContactForm />
                 </div>
-                <p className="mt-6 text-sm text-account-black/70">
+                <p className="mt-8 text-sm text-account-black/70">
                     For urgent safeguarding concerns, follow the reporting routes described in our{" "}
                     <Link href="/faq#transparency" className="font-semibold text-akhirah-teal underline underline-offset-2">
                         transparency FAQs

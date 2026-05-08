@@ -24,7 +24,7 @@ export default function EventsPage() {
                     Scroll to the Upcoming events section on the homepage to see what's confirmed — each tile opens an
                     event detail page when content exists for that slug.
                 </p>
-                <Link href="/" className="btn btn-primary font-bold">
+                <Link href="/" className="btn btn-primary font-bold w-full sm:w-auto justify-center">
                     View upcoming events on homepage
                 </Link>
             </PublicPageBodySection>
