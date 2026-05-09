@@ -7,8 +7,36 @@ import {
   type VolunteerDraft,
 } from "@/lib/validation/formsClient";
 
-const fieldClass =
-  "min-h-11 w-full px-4 py-3 text-base rounded-sm border border-akhirah-teal/15 bg-purity-white text-account-black placeholder:text-account-black/40 focus:outline-none focus:ring-2 focus:ring-eternal-gold";
+const baseField =
+  "min-h-11 w-full px-4 py-3 text-base rounded-sm border bg-purity-white text-account-black placeholder:text-account-black/40 focus:outline-none focus:ring-2 focus:ring-eternal-gold";
+
+function fieldClassFor(invalid: boolean): string {
+  return `${baseField} ${invalid ? "border-red-600" : "border-akhirah-teal/15"}`;
+}
+
+const FIELD_ORDER: Array<keyof VolunteerDraft> = [
+  "fullName",
+  "email",
+  "phone",
+  "country",
+  "city",
+  "interestsRaw",
+  "availability",
+  "experience",
+  "motivation",
+];
+
+const FIELD_DOM_ID: Record<keyof VolunteerDraft, string> = {
+  fullName: "vol-fullName",
+  email: "vol-email",
+  phone: "vol-phone",
+  country: "vol-country",
+  city: "vol-city",
+  interestsRaw: "vol-interests",
+  availability: "vol-availability",
+  experience: "vol-experience",
+  motivation: "vol-motivation",
+};
 
 export default function VolunteerForm() {
   const startedAt = useMemo(() => String(Date.now()), []);
@@ -50,7 +78,13 @@ export default function VolunteerForm() {
 
     const next = validateVolunteerDraft(draft);
     setErrors(next);
-    if (Object.keys(next).length > 0) return;
+    if (Object.keys(next).length > 0) {
+      const firstKey = FIELD_ORDER.find((k) => next[k]);
+      if (firstKey) {
+        document.getElementById(FIELD_DOM_ID[firstKey])?.focus();
+      }
+      return;
+    }
 
     setSubmitting(true);
     try {
@@ -111,6 +145,29 @@ export default function VolunteerForm() {
         </div>
       ) : null}
 
+      {Object.values(errors).some(Boolean) ? (
+        <div
+          role="alert"
+          aria-labelledby="vol-errors-title"
+          className="rounded-sm border border-red-300 bg-red-50 p-4"
+        >
+          <p id="vol-errors-title" className="text-sm font-semibold text-red-700">
+            Please fix the following:
+          </p>
+          <ul className="list-disc pl-5 mt-2 text-sm text-red-700">
+            {FIELD_ORDER.map((k) =>
+              errors[k] ? (
+                <li key={k}>
+                  <a href={`#${FIELD_DOM_ID[k]}`} className="underline">
+                    {errors[k]}
+                  </a>
+                </li>
+              ) : null,
+            )}
+          </ul>
+        </div>
+      ) : null}
+
       <div className="grid gap-5 sm:grid-cols-2">
         <div className="sm:col-span-2">
           <label htmlFor="vol-fullName" className="block text-sm font-semibold text-akhirah-teal mb-1.5">
@@ -123,7 +180,7 @@ export default function VolunteerForm() {
             autoComplete="name"
             required
             maxLength={160}
-            className={fieldClass}
+            className={fieldClassFor(Boolean(errors.fullName))}
             value={draft.fullName}
             onChange={(e) => setField("fullName")(e.target.value)}
             disabled={submitting}
@@ -148,7 +205,7 @@ export default function VolunteerForm() {
             autoComplete="email"
             required
             maxLength={255}
-            className={fieldClass}
+            className={fieldClassFor(Boolean(errors.email))}
             value={draft.email}
             onChange={(e) => setField("email")(e.target.value)}
             disabled={submitting}
@@ -173,7 +230,7 @@ export default function VolunteerForm() {
             autoComplete="tel"
             required
             maxLength={60}
-            className={fieldClass}
+            className={fieldClassFor(Boolean(errors.phone))}
             value={draft.phone}
             onChange={(e) => setField("phone")(e.target.value)}
             disabled={submitting}
@@ -198,7 +255,7 @@ export default function VolunteerForm() {
             autoComplete="country-name"
             required
             maxLength={100}
-            className={fieldClass}
+            className={fieldClassFor(Boolean(errors.country))}
             value={draft.country}
             onChange={(e) => setField("country")(e.target.value)}
             disabled={submitting}
@@ -223,7 +280,7 @@ export default function VolunteerForm() {
             autoComplete="address-level2"
             required
             maxLength={100}
-            className={fieldClass}
+            className={fieldClassFor(Boolean(errors.city))}
             value={draft.city}
             onChange={(e) => setField("city")(e.target.value)}
             disabled={submitting}
@@ -250,7 +307,7 @@ export default function VolunteerForm() {
           placeholder="School builds, distributions, volunteering locally, translations…"
           maxLength={600}
           required
-          className={`${fieldClass} min-h-[5.5rem] resize-y`}
+          className={`${fieldClassFor(Boolean(errors.interestsRaw))} min-h-[5.5rem] resize-y`}
           value={draft.interestsRaw}
           onChange={(e) => setField("interestsRaw")(e.target.value)}
           disabled={submitting}
@@ -277,7 +334,7 @@ export default function VolunteerForm() {
           autoComplete="off"
           maxLength={200}
           required
-          className={fieldClass}
+          className={fieldClassFor(Boolean(errors.availability))}
           value={draft.availability}
           onChange={(e) => setField("availability")(e.target.value)}
           disabled={submitting}
@@ -303,7 +360,7 @@ export default function VolunteerForm() {
           rows={4}
           autoComplete="off"
           maxLength={4000}
-          className={`${fieldClass} min-h-[7rem] resize-y`}
+          className={`${fieldClassFor(Boolean(errors.experience))} min-h-[7rem] resize-y`}
           value={draft.experience}
           onChange={(e) => setField("experience")(e.target.value)}
           disabled={submitting}
@@ -328,7 +385,7 @@ export default function VolunteerForm() {
           autoComplete="off"
           required
           maxLength={4000}
-          className={`${fieldClass} min-h-[8rem] resize-y`}
+          className={`${fieldClassFor(Boolean(errors.motivation))} min-h-[8rem] resize-y`}
           value={draft.motivation}
           onChange={(e) => setField("motivation")(e.target.value)}
           disabled={submitting}

@@ -84,7 +84,9 @@ export default function NewsletterSubscribeForm({
                     <input
                         id={`newsletter-email-${source}`}
                         type="email"
-                        className="min-h-11 w-full px-4 py-3 text-base rounded-sm text-account-black focus:outline-none focus:ring-2 focus:ring-eternal-gold border-2 border-akhirah-teal/15 bg-purity-white"
+                        className={`min-h-11 w-full px-4 py-3 text-base rounded-sm text-account-black focus:outline-none focus:ring-2 focus:ring-eternal-gold border-2 bg-purity-white ${
+                            status === "error" ? "border-red-600" : "border-akhirah-teal/15"
+                        }`}
                         required
                         autoComplete="email"
                         maxLength={255}
