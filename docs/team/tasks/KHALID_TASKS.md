@@ -60,26 +60,26 @@ Primary ownership: public route structure, navigation clarity, policy/about/prog
 
 ## Week 4: Final Navigation and Content QA
 
-> **Prep (done locally):** `main` includes upstream `mwijanarko1/main` plus merged `feature/week3-form-ux`. Before Week 4 execution: run `bun run dev`, click every header/footer/homepage/policy link, spot-check `/blog|events|campaigns|programmes/[slug]` from cards, and use `docs/team/tasks/WEEK3_BROKEN_LINK_AUDIT.md` + `navigation-map.md` as baselines. Ship the Mikhail QA report when the checklist below is finished.
+> **Prep (done locally):** `main` includes upstream `mwijanarko1/main` plus merged `feature/week3-form-ux`. Week 4 execution completed 2026-05-08 — see `docs/team/tasks/WEEK4_NAVIGATION_QA_REPORT.md` for Mikhail.
 
-- [ ] Run broken-link checks manually across public navigation.
-- [ ] Fix all broken header links found in final QA.
-- [ ] Fix all broken footer links found in final QA.
-- [ ] Fix all broken policy page links found in final QA.
-- [ ] Fix broken internal links from homepage sections.
-- [ ] Fix broken internal links from blog/event/campaign cards.
-- [ ] Fill in missing metadata fields on assigned public pages.
-- [ ] Add or improve weak calls to action on assigned content pages.
-- [ ] Submit one final navigation/content QA report to Mikhail with completed fixes and remaining blockers.
-- [ ] Open final polish PR if needed.
+- [x] Run broken-link checks manually across public navigation.
+- [x] Fix all broken header links found in final QA.
+- [x] Fix all broken footer links found in final QA.
+- [x] Fix all broken policy page links found in final QA.
+- [x] Fix broken internal links from homepage sections.
+- [x] Fix broken internal links from blog/event/campaign cards.
+- [x] Fill in missing metadata fields on assigned public pages.
+- [x] Add or improve weak calls to action on assigned content pages.
+- [x] Submit one final navigation/content QA report to Mikhail with completed fixes and remaining blockers.
+- [x] Open final polish PR if needed.
 
 ## PR Checklist
 
-- [ ] PR explains what changed.
-- [ ] PR explains why it changed.
-- [ ] PR explains how to test it.
+- [x] PR explains what changed.
+- [x] PR explains why it changed.
+- [x] PR explains how to test it.
 - [x] `bun run build` passes.
-- [ ] No payment provider code was changed.
-- [ ] No Convex code was changed.
-- [ ] No Clerk/auth code was changed.
+- [x] No payment provider code was changed.
+- [x] No Convex code was changed.
+- [x] No Clerk/auth code was changed.
 - [ ] Mikhail is requested as final reviewer.

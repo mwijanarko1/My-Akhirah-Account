@@ -31,9 +31,17 @@ export default function ComingSoonDetail({ kind, slug, listHref, listLabel }: Co
                     <span className="font-semibold text-account-black">Preview slug:</span>{" "}
                     <code className="rounded-sm bg-purity-white px-2 py-1 border border-akhirah-teal/15">{slug}</code>
                 </p>
-                <Link href={listHref} className="btn btn-secondary font-semibold">
-                    {listLabel}
-                </Link>
+                <div className="flex flex-col sm:flex-row sm:flex-wrap gap-3">
+                    <Link href={listHref} className="btn btn-secondary font-semibold w-full sm:w-auto justify-center">
+                        {listLabel}
+                    </Link>
+                    <Link href="/donate" className="btn btn-primary font-bold w-full sm:w-auto justify-center">
+                        Donate
+                    </Link>
+                    <Link href="/faq" className="btn btn-secondary font-semibold w-full sm:w-auto justify-center">
+                        Read FAQs
+                    </Link>
+                </div>
             </PublicPageBodySection>
         </>
     );

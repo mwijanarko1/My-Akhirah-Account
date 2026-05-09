@@ -3,6 +3,7 @@ import ComingSoonDetail from "../../ComingSoonDetail";
 
 export const metadata: Metadata = {
     title: "Programme | My Akhirah Account",
+    description: "Programme focus area — long-form content and impact reporting will appear here when published.",
 };
 
 type Props = { params: Promise<{ slug: string }> };

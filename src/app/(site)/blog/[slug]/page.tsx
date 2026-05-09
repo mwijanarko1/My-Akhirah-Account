@@ -3,6 +3,7 @@ import ComingSoonDetail from "../../ComingSoonDetail";
 
 export const metadata: Metadata = {
     title: "Article | My Akhirah Account",
+    description: "Read updates and stories from My Akhirah Account — full articles publish here when live in the CMS.",
 };
 
 type Props = { params: Promise<{ slug: string }> };

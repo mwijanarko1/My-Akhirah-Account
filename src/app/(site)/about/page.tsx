@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import PublicPageBodySection from "@/components/layout/PublicPageBodySection";
 import PublicPageCtaFooter from "@/components/layout/PublicPageCtaFooter";
 import PublicPageIntro from "@/components/layout/PublicPageIntro";
@@ -52,13 +53,13 @@ export default function AboutPage() {
                 </p>
                 <p className="text-account-black/85 text-base leading-relaxed">
                     Explore live appeals on{" "}
-                    <a className="font-semibold text-akhirah-teal underline underline-offset-2" href="/campaigns">
+                    <Link href="/campaigns" className="font-semibold text-akhirah-teal underline underline-offset-2">
                         Campaigns
-                    </a>{" "}
+                    </Link>{" "}
                     or browse ongoing work on{" "}
-                    <a className="font-semibold text-akhirah-teal underline underline-offset-2" href="/programmes">
+                    <Link href="/programmes" className="font-semibold text-akhirah-teal underline underline-offset-2">
                         Programmes
-                    </a>
+                    </Link>
                     .
                 </p>
             </PublicPageBodySection>

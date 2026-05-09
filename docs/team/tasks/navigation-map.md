@@ -1,7 +1,7 @@
 # Navigation & public route map
 
 Owner: Khalid (public nav & layout — Week 1 route map, Week 2 structure pass).  
-Last updated: 2026-05-06 (Week 3 form UX pass).
+Last updated: 2026-05-08 (Week 4 navigation QA + homepage CTAs).
 
 This document is the single source of truth for **header/footer routes**, **homepage section order**, and **policy placeholders** pending final copy from Mikhail.
 
@@ -129,3 +129,5 @@ Until CMS-driven pages exist, each slug renders a **thin placeholder** (intro + 
 - **2026-05-06 (Week 2 — Khalid):** Shared public layout pieces (`PublicPageBodySection`, `PublicPageCtaFooter`, eyebrow on `PublicPageIntro`); single `<main>` via `(site)/layout.tsx`; aligned labels (**About us** in header; footer legal **Privacy policy** / **Terms of use**); restructured About, Programmes, Contact, Policies, Blog/Events/Newsletter/Volunteer/Donate pages into intro → body → CTA; FAQ footer CTAs fixed (no `/safeguarding` 404 → `#transparency`); clearer verb-led links across listing/detail placeholders.
 
 - **2026-05-06 (Week 3 — Khalid):** Contact (`ContactForm`) and volunteer (`VolunteerForm`) UIs wired to existing API routes; newsletter signup labels, helper copy, and API error mapping improved (`NewsletterSubscribeForm`); footer safeguarding tile → `/faq#transparency`; FAQ sections use `scroll-mt-24` for hash navigation; blog/events listing primary CTAs full-width on small screens. Broken-link audit: `docs/team/tasks/WEEK3_BROKEN_LINK_AUDIT.md`.
+
+- **2026-05-08 (Week 4 — Khalid):** Source-level link audit (header/footer/home/policy/slug routes); homepage **Trust** + **Global reach** CTAs; **ComingSoonDetail** donate/FAQ actions; homepage + slug + campaign metadata hardening; card image `alt` text; about page internal `Link` usage. Report: `docs/team/tasks/WEEK4_NAVIGATION_QA_REPORT.md`.

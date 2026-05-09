@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 interface GlobalReachProps {
     title: string;
     subtitle?: string;
@@ -41,6 +43,14 @@ export default function GlobalReach({ title, subtitle }: GlobalReachProps) {
                         Communities supported across multiple regions
                     </p>
                 </div>
+                <p className="text-center mt-6 sm:mt-8">
+                    <Link
+                        href="/programmes"
+                        className="inline-flex min-h-11 items-center justify-center rounded-sm bg-akhirah-teal px-5 py-2.5 text-sm font-bold text-purity-white hover:bg-akhirah-teal-dark transition-colors"
+                    >
+                        Explore programme areas
+                    </Link>
+                </p>
             </div>
         </section>
     );
