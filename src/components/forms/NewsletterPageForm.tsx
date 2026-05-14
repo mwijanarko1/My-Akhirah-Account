@@ -5,8 +5,12 @@ import { validateNewsletterDraft, mapSubmitError, type NewsletterDraft } from "@
 import { newsletterSubmissionStatusUi, type SubmissionStatusUi } from "@/lib/forms/publicSubmissionStatus";
 import SubmissionStatusCallout from "@/components/forms/SubmissionStatusCallout";
 
-const fieldClass =
-  "min-h-11 w-full px-4 py-3 text-base rounded-sm border border-akhirah-teal/15 bg-purity-white text-account-black placeholder:text-account-black/40 focus:outline-none focus:ring-2 focus:ring-eternal-gold";
+const baseField =
+  "min-h-12 w-full touch-manipulation px-4 py-3 text-base rounded-sm border bg-purity-white text-account-black placeholder:text-account-black/40 focus:outline-none focus:ring-2 focus:ring-eternal-gold sm:min-h-11";
+
+function fieldClassFor(invalid: boolean): string {
+  return `${baseField} ${invalid ? "border-red-600" : "border-akhirah-teal/15"}`;
+}
 
 interface NewsletterPageFormProps {
   /** Hidden source tag forwarded to Convex via API */
@@ -61,7 +65,7 @@ export default function NewsletterPageForm({ source = "newsletter-page" }: Newsl
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-5 max-w-md" noValidate aria-label="Newsletter signup">
+    <form onSubmit={handleSubmit} className="relative flex max-w-md flex-col gap-5" noValidate aria-label="Newsletter signup">
       {honeypotArmed ? (
         <div className="absolute -left-[10000px] top-auto h-px w-px overflow-hidden" aria-hidden="true">
           <label htmlFor="newsletter-company">Company</label>
@@ -85,10 +89,14 @@ export default function NewsletterPageForm({ source = "newsletter-page" }: Newsl
           id="newsletter-email-page"
           name="email"
           type="email"
+          inputMode="email"
           autoComplete="email"
+          enterKeyHint="send"
+          autoCorrect="off"
+          spellCheck={false}
           required
           maxLength={255}
-          className={fieldClass}
+          className={fieldClassFor(Boolean(errors.email))}
           value={draft.email}
           onChange={(e) => {
             setDraft({ email: e.target.value });
@@ -121,7 +129,12 @@ export default function NewsletterPageForm({ source = "newsletter-page" }: Newsl
       ) : null}
       {successUi ? <SubmissionStatusCallout {...successUi} /> : null}
 
-      <button type="submit" className="btn btn-primary font-bold min-h-11 w-full sm:w-auto" disabled={submitting} aria-busy={submitting}>
+      <button
+        type="submit"
+        className="btn btn-primary min-h-12 w-full touch-manipulation font-bold sm:min-h-11 sm:w-auto focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-eternal-gold"
+        disabled={submitting}
+        aria-busy={submitting}
+      >
         {submitting ? "Subscribing…" : "Subscribe"}
       </button>
     </form>

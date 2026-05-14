@@ -10,7 +10,7 @@ import { contactSubmissionStatusUi, type SubmissionStatusUi } from "@/lib/forms/
 import SubmissionStatusCallout from "@/components/forms/SubmissionStatusCallout";
 
 const baseField =
-  "min-h-11 w-full px-4 py-3 text-base rounded-sm border bg-purity-white text-account-black placeholder:text-account-black/40 focus:outline-none focus:ring-2 focus:ring-eternal-gold";
+  "min-h-11 w-full touch-manipulation px-4 py-3 text-base rounded-sm border bg-purity-white text-account-black placeholder:text-account-black/40 focus:outline-none focus:ring-2 focus:ring-eternal-gold";
 
 function fieldClassFor(invalid: boolean): string {
   return `${baseField} ${invalid ? "border-red-600" : "border-akhirah-teal/15"}`;
@@ -97,7 +97,7 @@ export default function ContactForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex flex-col gap-5 max-w-xl"
+      className="relative flex max-w-xl flex-col gap-5"
       noValidate
       aria-label="Contact form"
     >
@@ -129,7 +129,10 @@ export default function ContactForm() {
             {FIELD_ORDER.map((k) =>
               errors[k] ? (
                 <li key={k}>
-                  <a href={`#contact-${k}`} className="underline">
+                  <a
+                    href={`#contact-${k}`}
+                    className="underline underline-offset-2 focus-visible:rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-eternal-gold"
+                  >
                     {errors[k]}
                   </a>
                 </li>
@@ -148,6 +151,7 @@ export default function ContactForm() {
           name="fullName"
           type="text"
           autoComplete="name"
+          enterKeyHint="next"
           required
           maxLength={160}
           className={fieldClassFor(Boolean(errors.fullName))}
@@ -174,7 +178,10 @@ export default function ContactForm() {
           id="contact-email"
           name="email"
           type="email"
+          inputMode="email"
           autoComplete="email"
+          autoCorrect="off"
+          enterKeyHint="next"
           required
           maxLength={255}
           className={fieldClassFor(Boolean(errors.email))}
@@ -199,7 +206,9 @@ export default function ContactForm() {
           id="contact-phone"
           name="phone"
           type="tel"
+          inputMode="tel"
           autoComplete="tel"
+          enterKeyHint="next"
           maxLength={60}
           className={fieldClassFor(Boolean(errors.phone))}
           value={draft.phone}
@@ -223,7 +232,8 @@ export default function ContactForm() {
           id="contact-subject"
           name="subject"
           type="text"
-          autoComplete="on"
+          autoComplete="off"
+          enterKeyHint="next"
           required
           maxLength={200}
           className={fieldClassFor(Boolean(errors.subject))}
@@ -249,6 +259,8 @@ export default function ContactForm() {
           name="message"
           rows={6}
           autoComplete="off"
+          spellCheck
+          enterKeyHint="send"
           required
           maxLength={6000}
           className={`${fieldClassFor(Boolean(errors.message))} min-h-[9rem] resize-y`}
@@ -276,7 +288,12 @@ export default function ContactForm() {
       ) : null}
       {successUi ? <SubmissionStatusCallout {...successUi} /> : null}
 
-      <button type="submit" className="btn btn-primary font-bold min-h-11 w-full sm:w-auto" disabled={submitting} aria-busy={submitting}>
+      <button
+        type="submit"
+        className="btn btn-primary min-h-12 w-full font-bold touch-manipulation sm:min-h-11 sm:w-auto focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-eternal-gold"
+        disabled={submitting}
+        aria-busy={submitting}
+      >
         {submitting ? "Sending…" : "Send message"}
       </button>
     </form>

@@ -70,14 +70,14 @@ export default function NewsletterSubscribeForm({
 
     const formClass =
         layout === "stacked"
-            ? "flex flex-col gap-3"
-            : "flex flex-col sm:flex-row gap-3";
+            ? "flex flex-col gap-3 sm:max-w-md"
+            : "flex flex-col gap-3 sm:flex-row sm:items-stretch";
 
     const errorClass = layout === "stacked" ? "mt-3 text-sm text-red-700" : "mt-3 text-sm text-red-300";
 
     return (
         <div className="max-w-lg">
-            <form className={formClass} onSubmit={handleSubmit} aria-label="Newsletter subscription form">
+            <form className={`${formClass} relative`} onSubmit={handleSubmit} aria-label="Newsletter subscription form">
                 <div className="flex-1">
                     <label htmlFor={`newsletter-email-${source}`} className="sr-only">
                         Email address
@@ -85,13 +85,15 @@ export default function NewsletterSubscribeForm({
                     <input
                         id={`newsletter-email-${source}`}
                         type="email"
-                        className={`min-h-11 w-full px-4 py-3 text-base rounded-sm text-account-black focus:outline-none focus:ring-2 focus:ring-eternal-gold border-2 bg-purity-white ${
+                        name="email"
+                        inputMode="email"
+                        autoComplete="email"
+                        enterKeyHint="send"
+                        className={`min-h-12 w-full touch-manipulation px-4 py-3 text-base rounded-sm text-account-black focus:outline-none focus:ring-2 focus:ring-eternal-gold border-2 bg-purity-white sm:min-h-11 ${
                             status === "error" ? "border-red-600" : "border-akhirah-teal/15"
                         }`}
                         required
-                        autoComplete="email"
                         maxLength={255}
-                        name="email"
                         value={email}
                         onChange={(e) => {
                             setEmail(e.target.value);
@@ -126,7 +128,11 @@ export default function NewsletterSubscribeForm({
                 </div>
                 <button
                     type="submit"
-                    className="btn btn-primary whitespace-nowrap font-bold"
+                    className={`btn btn-primary touch-manipulation font-bold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-eternal-gold ${
+                        layout === "stacked"
+                            ? "min-h-12 w-full justify-center sm:min-h-11"
+                            : "min-h-12 w-full whitespace-nowrap sm:min-h-11 sm:w-auto"
+                    }`}
                     disabled={status === "submitting"}
                     aria-busy={status === "submitting"}
                 >

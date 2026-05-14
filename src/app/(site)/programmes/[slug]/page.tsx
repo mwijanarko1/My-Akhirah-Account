@@ -27,7 +27,7 @@ function MarkdownBlocks({ markdown }: { markdown: string }) {
     return null;
   }
   return (
-    <div className="space-y-4 text-base leading-relaxed text-account-black/85">
+    <div className="space-y-4 text-base leading-relaxed text-account-black/85 max-w-prose">
       {blocks.map((block, i) => (
         <p key={i} className="whitespace-pre-wrap">
           {block}
@@ -50,7 +50,7 @@ export default async function ProgrammeDetailPage({ params }: Props) {
             to give today.
           </p>
         </div>
-        <Link href="/programmes" className="btn btn-primary font-semibold">
+        <Link href="/programmes" className="btn btn-primary inline-flex min-h-12 w-full touch-manipulation items-center justify-center font-semibold sm:min-h-11 sm:w-auto">
           All programmes
         </Link>
       </PublicPageIntro>
@@ -59,15 +59,23 @@ export default async function ProgrammeDetailPage({ params }: Props) {
 
   return (
     <PublicPageIntro title={program.name} description={program.summary}>
-      <div className="mb-10">
+      <div className="mb-10 min-w-0">
         <MarkdownBlocks markdown={program.descriptionMarkdown} />
       </div>
-      <Link
-        href="/programmes"
-        className="inline-flex text-sm font-semibold text-akhirah-teal hover:text-akhirah-teal-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-eternal-gold"
-      >
-        ← Back to all programmes
-      </Link>
+      <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
+        <Link
+          href="/programmes"
+          className="btn btn-secondary order-2 inline-flex min-h-12 w-full touch-manipulation items-center justify-center font-semibold sm:order-1 sm:min-h-11 sm:w-auto"
+        >
+          ← All programmes
+        </Link>
+        <Link
+          href="/campaigns"
+          className="order-1 inline-flex min-h-12 w-full items-center justify-center rounded-sm border border-akhirah-teal/20 bg-purity-white px-4 text-sm font-semibold text-akhirah-teal touch-manipulation hover:border-akhirah-teal/35 sm:order-2 sm:min-h-11 sm:w-auto focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-eternal-gold"
+        >
+          View campaigns
+        </Link>
+      </div>
     </PublicPageIntro>
   );
 }
