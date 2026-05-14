@@ -6,6 +6,8 @@ import {
   mapSubmitError,
   type ContactDraft,
 } from "@/lib/validation/formsClient";
+import { contactSubmissionStatusUi, type SubmissionStatusUi } from "@/lib/forms/publicSubmissionStatus";
+import SubmissionStatusCallout from "@/components/forms/SubmissionStatusCallout";
 
 const baseField =
   "min-h-11 w-full px-4 py-3 text-base rounded-sm border bg-purity-white text-account-black placeholder:text-account-black/40 focus:outline-none focus:ring-2 focus:ring-eternal-gold";
@@ -34,7 +36,7 @@ export default function ContactForm() {
   const [errors, setErrors] = useState<Partial<Record<keyof ContactDraft, string>>>({});
   const [formError, setFormError] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [success, setSuccess] = useState(false);
+  const [successUi, setSuccessUi] = useState<SubmissionStatusUi | null>(null);
   const [honeypotArmed, setHoneypotArmed] = useState(false);
   const [company, setCompany] = useState("");
 
@@ -48,13 +50,13 @@ export default function ContactForm() {
       setDraft((prev) => ({ ...prev, [key]: value }));
       setErrors((prev) => ({ ...prev, [key]: undefined }));
       setFormError("");
-      setSuccess(false);
+      setSuccessUi(null);
     };
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setFormError("");
-    setSuccess(false);
+    setSuccessUi(null);
 
     const next = validateContactDraft(draft);
     setErrors(next);
@@ -83,7 +85,7 @@ export default function ContactForm() {
         setFormError(mapSubmitError(body));
         return;
       }
-      setSuccess(true);
+      setSuccessUi(contactSubmissionStatusUi(body.status));
       setDraft({ fullName: "", email: "", phone: "", subject: "", message: "" });
     } catch {
       setFormError("Unable to submit right now.");
@@ -272,11 +274,7 @@ export default function ContactForm() {
           {formError}
         </p>
       ) : null}
-      {success ? (
-        <p className="text-sm font-semibold text-akhirah-teal" role="status">
-          Thank you — your message was sent successfully.
-        </p>
-      ) : null}
+      {successUi ? <SubmissionStatusCallout {...successUi} /> : null}
 
       <button type="submit" className="btn btn-primary font-bold min-h-11 w-full sm:w-auto" disabled={submitting} aria-busy={submitting}>
         {submitting ? "Sending…" : "Send message"}

@@ -90,9 +90,17 @@ export default async function HomePage() {
               viewAllText="All programmes"
             />
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 lg:gap-8">
-              {homepage.impacts.map((impact) => (
-                <ImpactCard key={impact.id} {...impact} />
-              ))}
+              {homepage.impacts.length === 0 ? (
+                <div className="sm:col-span-2 lg:col-span-3 rounded-sm border border-akhirah-teal/10 bg-mercy-mint/40 px-5 py-10 text-center">
+                  <p className="text-base font-semibold text-akhirah-teal">Programme impact stories coming soon</p>
+                  <p className="mx-auto mt-2 max-w-xl text-sm leading-relaxed text-account-black/70">
+                    When published metrics are linked to programmes, highlights will appear here. You can still browse
+                    programmes and campaigns below.
+                  </p>
+                </div>
+              ) : (
+                homepage.impacts.map((impact) => <ImpactCard key={impact.id} {...impact} />)
+              )}
             </div>
           </div>
         </section>

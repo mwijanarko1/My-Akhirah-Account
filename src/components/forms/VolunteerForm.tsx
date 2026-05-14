@@ -6,6 +6,8 @@ import {
   mapSubmitError,
   type VolunteerDraft,
 } from "@/lib/validation/formsClient";
+import { volunteerSubmissionStatusUi, type SubmissionStatusUi } from "@/lib/forms/publicSubmissionStatus";
+import SubmissionStatusCallout from "@/components/forms/SubmissionStatusCallout";
 
 const baseField =
   "min-h-11 w-full px-4 py-3 text-base rounded-sm border bg-purity-white text-account-black placeholder:text-account-black/40 focus:outline-none focus:ring-2 focus:ring-eternal-gold";
@@ -54,7 +56,7 @@ export default function VolunteerForm() {
   const [errors, setErrors] = useState<Partial<Record<keyof VolunteerDraft, string>>>({});
   const [formError, setFormError] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [success, setSuccess] = useState(false);
+  const [successUi, setSuccessUi] = useState<SubmissionStatusUi | null>(null);
   const [honeypotArmed, setHoneypotArmed] = useState(false);
   const [company, setCompany] = useState("");
 
@@ -68,13 +70,13 @@ export default function VolunteerForm() {
       setDraft((prev) => ({ ...prev, [key]: value }));
       setErrors((prev) => ({ ...prev, [key]: undefined }));
       setFormError("");
-      setSuccess(false);
+      setSuccessUi(null);
     };
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setFormError("");
-    setSuccess(false);
+    setSuccessUi(null);
 
     const next = validateVolunteerDraft(draft);
     setErrors(next);
@@ -109,7 +111,7 @@ export default function VolunteerForm() {
         setFormError(mapSubmitError(body));
         return;
       }
-      setSuccess(true);
+      setSuccessUi(volunteerSubmissionStatusUi(body.status));
       setDraft({
         fullName: "",
         email: "",
@@ -406,11 +408,7 @@ export default function VolunteerForm() {
           {formError}
         </p>
       ) : null}
-      {success ? (
-        <p className="text-sm font-semibold text-akhirah-teal" role="status">
-          Thank you — we received your application.
-        </p>
-      ) : null}
+      {successUi ? <SubmissionStatusCallout {...successUi} /> : null}
 
       <button type="submit" className="btn btn-primary font-bold min-h-11 w-full sm:w-auto" disabled={submitting} aria-busy={submitting}>
         {submitting ? "Sending…" : "Submit application"}

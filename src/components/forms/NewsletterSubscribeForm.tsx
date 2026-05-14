@@ -2,6 +2,8 @@
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { mapSubmitError, validateNewsletterDraft } from "@/lib/validation/formsClient";
+import { newsletterSubmissionStatusUi, type SubmissionStatusUi } from "@/lib/forms/publicSubmissionStatus";
+import SubmissionStatusCallout from "@/components/forms/SubmissionStatusCallout";
 
 type NewsletterSubscribeFormProps = {
     /** Sent to `/api/newsletter` as `source` for analytics */
@@ -16,6 +18,7 @@ export default function NewsletterSubscribeForm({
 }: NewsletterSubscribeFormProps) {
     const [email, setEmail] = useState("");
     const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
+    const [successUi, setSuccessUi] = useState<SubmissionStatusUi | null>(null);
     const [errorMessage, setErrorMessage] = useState("");
     const startedAt = useMemo(() => Date.now().toString(), []);
     const [honeypotArmed, setHoneypotArmed] = useState(false);
@@ -31,10 +34,12 @@ export default function NewsletterSubscribeForm({
         if (validation.email) {
             setStatus("error");
             setErrorMessage(validation.email);
+            setSuccessUi(null);
             return;
         }
         setStatus("submitting");
         setErrorMessage("");
+        setSuccessUi(null);
 
         try {
             const formData = new FormData();
@@ -54,6 +59,7 @@ export default function NewsletterSubscribeForm({
                 setErrorMessage(mapSubmitError(body));
                 return;
             }
+            setSuccessUi(newsletterSubmissionStatusUi(body.status));
             setStatus("success");
             setEmail("");
         } catch {
@@ -66,11 +72,6 @@ export default function NewsletterSubscribeForm({
         layout === "stacked"
             ? "flex flex-col gap-3"
             : "flex flex-col sm:flex-row gap-3";
-
-    const successClass =
-        layout === "stacked"
-            ? "mt-3 text-sm text-akhirah-teal font-medium"
-            : "mt-3 text-sm text-mercy-mint";
 
     const errorClass = layout === "stacked" ? "mt-3 text-sm text-red-700" : "mt-3 text-sm text-red-300";
 
@@ -97,6 +98,10 @@ export default function NewsletterSubscribeForm({
                             if (status === "error") {
                                 setStatus("idle");
                                 setErrorMessage("");
+                            }
+                            if (status === "success") {
+                                setStatus("idle");
+                                setSuccessUi(null);
                             }
                         }}
                         disabled={status === "submitting"}
@@ -128,11 +133,7 @@ export default function NewsletterSubscribeForm({
                     {status === "submitting" ? "Subscribing…" : "Subscribe"}
                 </button>
             </form>
-            {status === "success" && (
-                <p className={successClass} role="status">
-                    Thank you for subscribing.
-                </p>
-            )}
+            {status === "success" && successUi ? <SubmissionStatusCallout {...successUi} className="mt-3" /> : null}
             {status === "error" && (
                 <p id={`newsletter-error-${source}`} className={errorClass} role="alert">
                     {errorMessage}

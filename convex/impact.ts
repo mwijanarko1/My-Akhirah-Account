@@ -83,7 +83,7 @@ export const listImpactCards = query({
         imageUrl: "/hero-bg.jpg",
         stat: snapshot ? formatStatValue(snapshot.value, metric.displayFormat) : undefined,
         statLabel: metric.unit,
-        href: `/projects?metric=${metric.slug}`,
+        href: "/programmes",
       });
     }
 
