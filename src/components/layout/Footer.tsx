@@ -31,7 +31,8 @@ const footerLinks = {
 const transparencyTiles = [
     { href: "/privacy", label: "Governance" },
     { href: "/terms", label: "Annual reports" },
-    { href: "/faq", label: "Safeguarding" },
+    /** FAQ transparency section until a dedicated safeguarding URL ships */
+    { href: "/faq#transparency", label: "Safeguarding" },
 ] as const;
 
 const socialLinks = [
@@ -77,7 +78,7 @@ export default function Footer() {
                             <p className="text-white/75 text-sm mb-5 max-w-md">
                                 Occasional updates on impact, events, and ways to give with intention.
                             </p>
-                            <NewsletterSubscribeForm source="footer" />
+                            <NewsletterSubscribeForm source="footer" surface="dark" layout="stacked" />
                         </div>
                     </div>
                 </div>

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import VolunteerForm from "@/components/forms/VolunteerForm";
 import PublicPageBodySection from "@/components/layout/PublicPageBodySection";
 import PublicPageCtaFooter from "@/components/layout/PublicPageCtaFooter";
 import PublicPageIntro from "@/components/layout/PublicPageIntro";
@@ -17,7 +18,7 @@ export default function VolunteerPage() {
                 description="Warehouse shifts, community events, and remote skills — volunteers carry amanah in every distribution."
             />
 
-            <PublicPageBodySection surface="mint">
+            <PublicPageBodySection surface="mint" spacious>
                 <h2 className="text-xl sm:text-2xl font-bold text-akhirah-teal mb-4">Ways to help</h2>
                 <ul className="list-disc pl-5 space-y-3 text-account-black/85 leading-relaxed">
                     <li>
@@ -34,12 +35,15 @@ export default function VolunteerPage() {
                 </ul>
             </PublicPageBodySection>
 
-            <PublicPageBodySection surface="white">
-                <h2 className="text-xl sm:text-2xl font-bold text-akhirah-teal mb-3">Applications</h2>
-                <p className="text-account-black/80 leading-relaxed">
-                    Field grouping and clearer confirmation messaging arrive in Week 3 — the API route{" "}
-                    <code className="text-sm">/api/volunteer</code> is already wired for submissions once the UI lands.
+            <PublicPageBodySection surface="white" spacious id="volunteer-application">
+                <h2 className="text-xl sm:text-2xl font-bold text-akhirah-teal mb-3">Apply to volunteer</h2>
+                <p className="text-account-black/80 leading-relaxed mb-8 max-w-2xl">
+                    Tell us how you&apos;d like to help and when you&apos;re usually free. We&apos;ll email you when there&apos;s a good match
+                    — please answer honestly so we can place you safely.
                 </p>
+                <div className="rounded-sm border border-akhirah-teal/15 bg-mercy-mint/25 p-5 sm:p-8 md:p-10">
+                    <VolunteerForm />
+                </div>
             </PublicPageBodySection>
 
             <PublicPageCtaFooter

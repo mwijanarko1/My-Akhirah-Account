@@ -24,7 +24,7 @@ export default function BlogPage() {
                     The freshest posts appear first on the homepage under Latest updates — open any card to read the full
                     story when live content exists for that slug.
                 </p>
-                <Link href="/" className="btn btn-primary font-bold">
+                <Link href="/" className="btn btn-primary font-bold w-full sm:w-auto justify-center">
                     Go to homepage for latest articles
                 </Link>
             </PublicPageBodySection>

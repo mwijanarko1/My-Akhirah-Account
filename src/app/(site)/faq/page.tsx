@@ -117,7 +117,7 @@ export default function FaqPage() {
                             <article
                                 key={section.id}
                                 id={section.id}
-                                className={`rounded-sm border border-akhirah-teal/15 p-5 sm:p-6 md:p-8 ${
+                                className={`scroll-mt-24 rounded-sm border border-akhirah-teal/15 p-5 sm:p-6 md:p-8 ${
                                     index % 2 === 1 ? "bg-mercy-mint/40" : "bg-purity-white"
                                 }`}
                             >
