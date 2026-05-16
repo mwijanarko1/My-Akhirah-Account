@@ -39,7 +39,18 @@ export default function CampaignCard({
             {description}
           </p>
 
-          <CampaignProgress title={title} raised={raised} goal={goal} />
+          <div className="mb-4">
+            <CampaignProgress title={title} raised={raised} goal={goal} />
+          </div>
+
+          <div className="mt-auto pt-2 border-t border-gray-100">
+            <Link
+              href={`/donate?campaign=${encodeURIComponent(title)}`}
+              className="w-full btn border-2 border-akhirah-teal text-akhirah-teal hover:bg-mercy-mint py-2 rounded-sm block text-center font-bold text-sm"
+            >
+              Donate to {title}
+            </Link>
+          </div>
         </div>
       </Link>
     </article>

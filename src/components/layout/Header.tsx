@@ -143,6 +143,9 @@ export default function Header({ transparentAtTop = false }: HeaderProps) {
                                     {link.label}
                                 </Link>
                             ))}
+                            <Link href="/donate" className="btn btn-primary ml-2 px-4 py-2 text-sm font-bold">
+                                Donate
+                            </Link>
                         </nav>
 
                         <div className="flex shrink-0 items-center gap-1.5 pr-0 sm:pr-1">
