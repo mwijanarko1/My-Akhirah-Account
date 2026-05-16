@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import NewsletterSubscribeForm from "@/components/forms/NewsletterSubscribeForm";
-import PublicPageBodySection from "@/components/layout/PublicPageBodySection";
-import PublicPageCtaFooter from "@/components/layout/PublicPageCtaFooter";
 import PublicPageIntro from "@/components/layout/PublicPageIntro";
+import NewsletterSubscribeForm from "@/components/forms/NewsletterSubscribeForm";
 
 export const metadata: Metadata = {
     title: "Newsletter | My Akhirah Account",
@@ -12,42 +10,31 @@ export const metadata: Metadata = {
 
 export default function NewsletterPage() {
     return (
-        <>
-            <PublicPageIntro
-                eyebrow="Newsletter"
-                title="Stay in touch"
-                description="Occasional updates on impact, events, and ways to give with intention."
-            />
-
-            <PublicPageBodySection surface="white">
-                <p className="text-account-black/80 mb-8 leading-relaxed">
-                    We never sell your data — read how we handle information in our{" "}
-                    <Link href="/privacy" className="font-semibold text-akhirah-teal underline underline-offset-2">
-                        Privacy policy
-                    </Link>
-                    .
+        <PublicPageIntro
+            title="Newsletter"
+            description="Occasional updates on impact, events, and ways to give with intention. We never sell your data — see our Privacy page for how we handle information."
+        >
+            <div className="mx-auto max-w-xl rounded-sm border border-akhirah-teal/15 bg-mercy-mint/30 p-5 sm:p-8 lg:mx-0 lg:max-w-lg">
+                <h2 id="newsletter-signup" className="text-lg font-bold text-akhirah-teal sm:text-xl">
+                    Sign up
+                </h2>
+                <p className="mt-2 text-sm leading-relaxed text-account-black/75 sm:text-base">
+                    One field, one tap — works on small screens and with screen readers.
                 </p>
-                <h2 className="text-xl font-bold text-akhirah-teal mb-4">Email signup</h2>
-                <div className="rounded-sm border border-akhirah-teal/15 bg-mercy-mint/30 p-6 sm:p-8">
+                <div className="mt-6">
                     <NewsletterSubscribeForm source="newsletter-page" layout="stacked" />
                 </div>
-                <p className="mt-8 text-sm text-account-black/60">
-                    Prefer not to use this page? Subscribe from the{" "}
-                    <Link href="/#site-newsletter" className="font-semibold text-akhirah-teal underline underline-offset-2">
-                        footer on any page
-                    </Link>{" "}
-                    — same endpoint.
-                </p>
-            </PublicPageBodySection>
-
-            <PublicPageCtaFooter
-                title="While you wait for the next email"
-                description="Explore appeals or questions donors ask most often."
-                actions={[
-                    { href: "/campaigns", label: "Browse campaigns", variant: "primary" },
-                    { href: "/faq", label: "Open FAQ", variant: "outlineOnDark" },
-                ]}
-            />
-        </>
+            </div>
+            <p className="mt-8 max-w-prose text-sm leading-relaxed text-account-black/65 sm:text-base">
+                You can also subscribe from the{" "}
+                <Link
+                    href="/#site-newsletter"
+                    className="font-semibold text-akhirah-teal underline underline-offset-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-eternal-gold"
+                >
+                    site footer
+                </Link>{" "}
+                on any page — the same secure endpoint is used.
+            </p>
+        </PublicPageIntro>
     );
 }

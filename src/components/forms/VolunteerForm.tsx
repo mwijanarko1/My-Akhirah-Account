@@ -10,7 +10,7 @@ import { volunteerSubmissionStatusUi, type SubmissionStatusUi } from "@/lib/form
 import SubmissionStatusCallout from "@/components/forms/SubmissionStatusCallout";
 
 const baseField =
-  "min-h-11 w-full px-4 py-3 text-base rounded-sm border bg-purity-white text-account-black placeholder:text-account-black/40 focus:outline-none focus:ring-2 focus:ring-eternal-gold";
+  "min-h-11 w-full touch-manipulation px-4 py-3 text-base rounded-sm border bg-purity-white text-account-black placeholder:text-account-black/40 focus:outline-none focus:ring-2 focus:ring-eternal-gold";
 
 function fieldClassFor(invalid: boolean): string {
   return `${baseField} ${invalid ? "border-red-600" : "border-akhirah-teal/15"}`;
@@ -131,7 +131,12 @@ export default function VolunteerForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-5 max-w-2xl" noValidate aria-label="Volunteer application">
+    <form
+      onSubmit={handleSubmit}
+      className="relative flex max-w-2xl flex-col gap-5"
+      noValidate
+      aria-label="Volunteer application"
+    >
       {honeypotArmed ? (
         <div className="absolute -left-[10000px] top-auto h-px w-px overflow-hidden" aria-hidden="true">
           <label htmlFor="vol-company">Company</label>
@@ -160,7 +165,10 @@ export default function VolunteerForm() {
             {FIELD_ORDER.map((k) =>
               errors[k] ? (
                 <li key={k}>
-                  <a href={`#${FIELD_DOM_ID[k]}`} className="underline">
+                  <a
+                    href={`#${FIELD_DOM_ID[k]}`}
+                    className="underline underline-offset-2 focus-visible:rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-eternal-gold"
+                  >
                     {errors[k]}
                   </a>
                 </li>
@@ -180,6 +188,7 @@ export default function VolunteerForm() {
             name="fullName"
             type="text"
             autoComplete="name"
+            enterKeyHint="next"
             required
             maxLength={160}
             className={fieldClassFor(Boolean(errors.fullName))}
@@ -204,7 +213,10 @@ export default function VolunteerForm() {
             id="vol-email"
             name="email"
             type="email"
+            inputMode="email"
             autoComplete="email"
+            autoCorrect="off"
+            enterKeyHint="next"
             required
             maxLength={255}
             className={fieldClassFor(Boolean(errors.email))}
@@ -229,7 +241,9 @@ export default function VolunteerForm() {
             id="vol-phone"
             name="phone"
             type="tel"
+            inputMode="tel"
             autoComplete="tel"
+            enterKeyHint="next"
             required
             maxLength={60}
             className={fieldClassFor(Boolean(errors.phone))}
@@ -255,6 +269,7 @@ export default function VolunteerForm() {
             name="country"
             type="text"
             autoComplete="country-name"
+            enterKeyHint="next"
             required
             maxLength={100}
             className={fieldClassFor(Boolean(errors.country))}
@@ -280,6 +295,7 @@ export default function VolunteerForm() {
             name="city"
             type="text"
             autoComplete="address-level2"
+            enterKeyHint="next"
             required
             maxLength={100}
             className={fieldClassFor(Boolean(errors.city))}
@@ -306,6 +322,8 @@ export default function VolunteerForm() {
           name="interests"
           rows={3}
           autoComplete="off"
+          spellCheck
+          enterKeyHint="next"
           placeholder="School builds, distributions, volunteering locally, translations…"
           maxLength={600}
           required
@@ -334,6 +352,7 @@ export default function VolunteerForm() {
           name="availability"
           type="text"
           autoComplete="off"
+          enterKeyHint="next"
           maxLength={200}
           required
           className={fieldClassFor(Boolean(errors.availability))}
@@ -361,6 +380,8 @@ export default function VolunteerForm() {
           name="experience"
           rows={4}
           autoComplete="off"
+          spellCheck
+          enterKeyHint="next"
           maxLength={4000}
           className={`${fieldClassFor(Boolean(errors.experience))} min-h-[7rem] resize-y`}
           value={draft.experience}
@@ -385,6 +406,8 @@ export default function VolunteerForm() {
           name="motivation"
           rows={5}
           autoComplete="off"
+          spellCheck
+          enterKeyHint="send"
           required
           maxLength={4000}
           className={`${fieldClassFor(Boolean(errors.motivation))} min-h-[8rem] resize-y`}
@@ -410,7 +433,12 @@ export default function VolunteerForm() {
       ) : null}
       {successUi ? <SubmissionStatusCallout {...successUi} /> : null}
 
-      <button type="submit" className="btn btn-primary font-bold min-h-11 w-full sm:w-auto" disabled={submitting} aria-busy={submitting}>
+      <button
+        type="submit"
+        className="btn btn-primary min-h-12 w-full touch-manipulation font-bold sm:min-h-11 sm:w-auto focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-eternal-gold"
+        disabled={submitting}
+        aria-busy={submitting}
+      >
         {submitting ? "Sending…" : "Submit application"}
       </button>
     </form>

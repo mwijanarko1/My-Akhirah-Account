@@ -26,17 +26,17 @@ export default async function ProgrammesPage() {
             When the team publishes active programmes in the admin system, they will appear here automatically. You can
             still explore campaigns and other ways to give in the meantime.
           </p>
-          <Link href="/campaigns" className="btn btn-primary mt-6 inline-flex font-bold">
+          <Link href="/campaigns" className="btn btn-primary mt-6 inline-flex min-h-12 w-full touch-manipulation items-center justify-center font-bold sm:min-h-11 sm:w-auto">
             View campaigns
           </Link>
         </div>
       ) : (
-        <ul className="mb-8 space-y-4">
+        <ul className="mb-8 space-y-3 sm:space-y-4">
           {programmes.map((program) => (
             <li key={program.slug}>
               <Link
                 href={`/programmes/${program.slug}`}
-                className="block rounded-sm border border-akhirah-teal/12 bg-purity-white p-5 shadow-sm transition-shadow hover:border-akhirah-teal/25 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-eternal-gold"
+                className="block min-h-[3.25rem] rounded-sm border border-akhirah-teal/12 bg-purity-white p-4 shadow-sm transition-shadow active:bg-mercy-mint/30 sm:min-h-0 sm:p-5 hover:border-akhirah-teal/25 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-eternal-gold"
               >
                 <h2 className="text-lg font-bold text-akhirah-teal sm:text-xl">{program.name}</h2>
                 <p className="mt-2 text-sm leading-relaxed text-account-black/80 sm:text-base">{program.summary}</p>
@@ -50,7 +50,7 @@ export default async function ProgrammesPage() {
         </ul>
       )}
 
-      <Link href="/" className="btn btn-secondary font-semibold">
+      <Link href="/" className="btn btn-secondary inline-flex min-h-12 items-center justify-center font-semibold touch-manipulation sm:min-h-11">
         Back to homepage
       </Link>
     </PublicPageIntro>
