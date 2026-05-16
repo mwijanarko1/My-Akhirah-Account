@@ -13,12 +13,25 @@ import {
   ImpactCard,
   CampaignCard,
 } from "@/components";
+import type { Metadata } from "next";
 import {
   mockTrustItems,
   mockEmergencyFeatured,
   mockEmergencySecondaryAppeals,
 } from "@/lib/mockData";
 import { getHomepageData } from "@/lib/server/homepage";
+
+export const metadata: Metadata = {
+    title: "Home | My Akhirah Account",
+    description:
+        "Give with clarity — trusted appeals, transparent delivery, and impact you can follow. Explore campaigns, programmes, events, and ways to support communities.",
+    openGraph: {
+        title: "My Akhirah Account",
+        description:
+            "Charitable giving, community support, and growth rooted in faith — donate, learn, and stay informed.",
+        type: "website",
+    },
+};
 
 export default async function HomePage() {
   const homepage = await getHomepageData();

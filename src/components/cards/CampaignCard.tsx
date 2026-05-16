@@ -25,7 +25,7 @@ export default function CampaignCard({
         <div className="relative aspect-video overflow-hidden">
           <Image
             src={imageUrl}
-            alt=""
+            alt={title}
             fill
             className="object-cover transition-transform duration-500 group-hover:scale-[1.02]"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"

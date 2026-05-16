@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import CampaignProgress from "@/components/campaigns/CampaignProgress";
@@ -10,6 +11,23 @@ interface CampaignPageProps {
 }
 
 const getSlugFromHref = (href: string) => href.split("/").filter(Boolean).at(-1);
+
+export async function generateMetadata({ params }: CampaignPageProps): Promise<Metadata> {
+    const { slug } = await params;
+    const campaign = mockCampaigns.find((item) => getSlugFromHref(item.href) === slug);
+    if (!campaign) {
+        return {
+            title: "Campaign | My Akhirah Account",
+            description: "This appeal is not available — browse active campaigns to give.",
+        };
+    }
+    const description =
+        campaign.description.length > 160 ? `${campaign.description.slice(0, 157)}…` : campaign.description;
+    return {
+        title: `${campaign.title} | My Akhirah Account`,
+        description,
+    };
+}
 
 export default async function CampaignPage({ params }: CampaignPageProps) {
     const { slug } = await params;

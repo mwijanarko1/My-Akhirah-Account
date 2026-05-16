@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 interface TrustItem {
     title: string;
     description: string;
@@ -46,6 +48,20 @@ export default function TrustSection({ title, subtitle, items }: TrustSectionPro
                             <p className="text-account-black/75 text-sm leading-relaxed">{item.description}</p>
                         </div>
                     ))}
+                </div>
+                <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row flex-wrap justify-center gap-3">
+                    <Link
+                        href="/faq"
+                        className="inline-flex min-h-11 items-center justify-center rounded-sm border border-white/30 px-5 py-2.5 text-sm font-semibold text-purity-white hover:border-eternal-gold hover:text-eternal-gold transition-colors"
+                    >
+                        Browse donor FAQs
+                    </Link>
+                    <Link
+                        href="/contact"
+                        className="inline-flex min-h-11 items-center justify-center rounded-sm border border-white/30 px-5 py-2.5 text-sm font-semibold text-purity-white hover:border-eternal-gold hover:text-eternal-gold transition-colors"
+                    >
+                        Contact the team
+                    </Link>
                 </div>
             </div>
         </section>

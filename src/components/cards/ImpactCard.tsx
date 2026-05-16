@@ -23,7 +23,7 @@ export default function ImpactCard({
             <div className="relative aspect-[4/3] overflow-hidden">
                 <Image
                     src={imageUrl}
-                    alt=""
+                    alt={title}
                     fill
                     className="object-cover transition-transform duration-500 group-hover:scale-[1.02]"
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
