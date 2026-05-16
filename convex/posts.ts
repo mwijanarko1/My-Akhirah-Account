@@ -46,7 +46,13 @@ export const listPublished = query({
         excerpt: post.excerpt,
         imageUrl: mediaUrl(post.heroMediaId),
         href: postHref(post.slug),
-        date: post.publishedAt ? new Date(post.publishedAt).toLocaleDateString("en-GB") : undefined,
+        date: post.publishedAt
+          ? new Date(post.publishedAt).toLocaleDateString("en-GB", {
+              day: "numeric",
+              month: "short",
+              year: "numeric",
+            })
+          : undefined,
         datetime: post.publishedAt ? new Date(post.publishedAt).toISOString() : undefined,
       }));
   },

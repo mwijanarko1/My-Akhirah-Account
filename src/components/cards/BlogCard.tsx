@@ -32,21 +32,26 @@ export default function BlogCard({
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     />
                     <div className="absolute top-3 left-3">
-                        <span className="inline-block px-2.5 py-1 bg-eternal-gold text-account-black text-xs font-bold rounded-sm uppercase tracking-wide">
+                        <span className="inline-block rounded-sm bg-eternal-gold px-2.5 py-1 text-xs font-bold uppercase tracking-wide text-akhirah-teal">
                             {category}
                         </span>
                     </div>
                 </div>
                 <div className="p-4 md:p-5 flex flex-col flex-1">
                     {date && (
-                        <time dateTime={datetime} className="text-xs font-medium text-akhirah-teal/80 mb-2">
+                        <time
+                            dateTime={datetime}
+                            className="mb-2 block text-xs font-medium uppercase tracking-wide text-account-black/55"
+                        >
                             {date}
                         </time>
                     )}
-                    <h3 className="font-bold text-lg mb-2 text-account-black group-hover:text-akhirah-teal transition-colors line-clamp-2 leading-snug">
+                    <h3 className="mb-2 min-w-0 text-balance font-bold italic leading-snug text-akhirah-teal text-lg transition-colors group-hover:text-[#034b45] sm:text-xl">
                         {title}
                     </h3>
-                    <p className="text-account-black/70 text-sm line-clamp-3 mb-4 flex-1">{excerpt}</p>
+                    <p className="mb-4 flex-1 text-pretty text-sm leading-relaxed text-account-black/70 line-clamp-6 sm:text-base">
+                        {excerpt}
+                    </p>
                     <span className="inline-flex items-center gap-1 text-sm font-semibold text-akhirah-teal group-hover:text-eternal-gold transition-colors">
                         Read more
                         <span aria-hidden>→</span>

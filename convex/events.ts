@@ -12,6 +12,53 @@ function mediaUrl(mediaId: string | undefined): string {
   return mediaId ? `/api/media/${mediaId}` : "/hero-bg.jpg";
 }
 
+function formatEventSchedule(startsAt: number): string {
+  const start = new Date(startsAt);
+  const dateStr = start.toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+  const timeStr = start.toLocaleTimeString("en-GB", {
+    hour: "numeric",
+    minute: "2-digit",
+  });
+  return `${dateStr} · ${timeStr}`;
+}
+
+export const listPublished = query({
+  args: {
+    limit: v.optional(v.number()),
+  },
+  handler: async (ctx, args) => {
+    const now = Date.now();
+    const limit = Math.min(args.limit ?? 48, 100);
+    const events = await ctx.db
+      .query("events")
+      .withIndex("by_status_startsAt", (q) => q.eq("status", "published"))
+      .collect();
+
+    const upcoming = events
+      .filter((event) => event.startsAt >= now)
+      .sort((left, right) => left.startsAt - right.startsAt);
+    const past = events
+      .filter((event) => event.startsAt < now)
+      .sort((left, right) => right.startsAt - left.startsAt);
+    const ordered = [...upcoming, ...past].slice(0, limit);
+
+    return ordered.map((event) => ({
+      id: event._id,
+      title: event.title,
+      date: formatEventSchedule(event.startsAt),
+      datetime: new Date(event.startsAt).toISOString(),
+      location: event.locationLabel,
+      imageUrl: mediaUrl(event.heroMediaId),
+      href: eventHref(event.slug),
+      isUpcoming: event.startsAt >= now,
+    }));
+  },
+});
+
 export const listUpcoming = query({
   args: {
     limit: v.optional(v.number()),
@@ -31,7 +78,7 @@ export const listUpcoming = query({
       .map((event) => ({
         id: event._id,
         title: event.title,
-        date: new Date(event.startsAt).toLocaleDateString("en-GB"),
+        date: formatEventSchedule(event.startsAt),
         datetime: new Date(event.startsAt).toISOString(),
         location: event.locationLabel,
         imageUrl: mediaUrl(event.heroMediaId),
