@@ -2,7 +2,7 @@ const skeletonCards = ["campaign-card-1", "campaign-card-2", "campaign-card-3"];
 
 export default function CampaignsLoading() {
     return (
-        <main className="min-w-0 flex-1 bg-purity-white">
+        <div className="min-w-0 flex-1 bg-purity-white">
             <section className="section">
                 <div className="container-custom">
                     <div className="mb-8 max-w-3xl md:mb-10">
@@ -31,6 +31,6 @@ export default function CampaignsLoading() {
                     </div>
                 </div>
             </section>
-        </main>
+        </div>
     );
 }

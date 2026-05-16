@@ -17,14 +17,14 @@ export default async function CampaignPage({ params }: CampaignPageProps) {
 
     if (!campaign) {
         return (
-            <main className="min-w-0 flex-1 bg-purity-white">
+            <>
                 <section className="section">
                     <div className="container-custom max-w-3xl">
                         <Link
                             href="/campaigns"
                             className="mb-6 inline-flex text-sm font-semibold text-akhirah-teal hover:text-akhirah-teal-dark"
                         >
-                            Back to campaigns
+                            ← View all campaigns
                         </Link>
                         <div className="border border-akhirah-teal/10 bg-mercy-mint p-6 md:p-8">
                             <h1 className="mb-3 text-3xl font-bold text-account-black md:text-4xl">Campaign not found</h1>
@@ -35,19 +35,19 @@ export default async function CampaignPage({ params }: CampaignPageProps) {
                         </div>
                     </div>
                 </section>
-            </main>
+            </>
         );
     }
 
     return (
-        <main className="min-w-0 flex-1 bg-purity-white">
+        <>
             <section className="section">
                 <div className="container-custom">
                     <Link
                         href="/campaigns"
                         className="mb-6 inline-flex text-sm font-semibold text-akhirah-teal hover:text-akhirah-teal-dark"
                     >
-                        Back to campaigns
+                        ← View all campaigns
                     </Link>
 
                     <div className="grid gap-8 lg:grid-cols-[minmax(0,1.08fr)_minmax(20rem,0.72fr)] lg:gap-10">
@@ -68,7 +68,7 @@ export default async function CampaignPage({ params }: CampaignPageProps) {
                             />
 
                             <Link href="/donate" className="btn btn-primary w-full justify-center font-bold">
-                                Donate
+                                Donate to this appeal
                             </Link>
                         </aside>
                     </div>
@@ -87,6 +87,6 @@ export default async function CampaignPage({ params }: CampaignPageProps) {
                     ) : null}
                 </div>
             </section>
-        </main>
+        </>
     );
 }

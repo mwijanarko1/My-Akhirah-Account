@@ -1,7 +1,7 @@
 # Navigation & public route map
 
-Owner: Khalid (Week 1 — public structure planning).  
-Last updated: 2026-05-01.
+Owner: Khalid (public nav & layout — Week 1 route map, Week 2 structure pass).  
+Last updated: 2026-05-06.
 
 This document is the single source of truth for **header/footer routes**, **homepage section order**, and **policy placeholders** pending final copy from Mikhail.
 
@@ -39,7 +39,7 @@ Order left → right (same labels everywhere):
 | # | Label | URL |
 |---|--------|-----|
 | 1 | Home | `/` |
-| 2 | About | `/about` |
+| 2 | About us | `/about` |
 | 3 | Campaigns | `/campaigns` |
 | 4 | Programmes | `/programmes` |
 | 5 | Blog | `/blog` |
@@ -58,9 +58,9 @@ Mobile drawer ends with primary **Donate** CTA → `/donate` (unchanged behaviou
 | Column title | Links (label → URL) |
 |--------------|---------------------|
 | **Discover** | Campaigns → `/campaigns`, Programmes → `/programmes`, Blog → `/blog`, Events → `/events`, FAQ → `/faq` |
-| **Organisation** | About → `/about`, Contact → `/contact`, Volunteer → `/volunteer`, Newsletter → `/newsletter` |
+| **Organisation** | About us → `/about`, Contact → `/contact`, Volunteer → `/volunteer`, Newsletter → `/newsletter` |
 | **Get involved** | Donate → `/donate` |
-| **Legal** | Privacy → `/privacy`, Terms → `/terms`, FAQ → `/faq` |
+| **Legal** | Privacy policy → `/privacy`, Terms of use → `/terms`, FAQ → `/faq` |
 
 **Transparency strip (above columns):** three tiles are lightweight entry points until governance PDFs exist:
 
@@ -118,10 +118,12 @@ Detail URLs follow:
 - `/campaigns/[slug]`
 - `/programmes/[slug]`
 
-Until CMS-driven pages exist, each slug renders a **thin placeholder** (“Content coming soon”) so internal links from cards do not 404.
+Until CMS-driven pages exist, each slug renders a **thin placeholder** (intro + “view overview” link) so internal links from cards do not 404.
 
 ---
 
 ## Changelog (implementation)
 
 - **2026-05-01:** Initial map + route implementation in app router `(site)` group, header/footer alignment, homepage `viewAllHref` fix (`/projects` → `/programmes`), mock impact card hrefs → `/programmes/...`, homepage fallback banner CTA (`/fundraise` → `/campaigns`), default hero secondary CTA (`/zakat` → `/faq`). Convex-backed homepage copy may still override these when present in the database.
+
+- **2026-05-06 (Week 2 — Khalid):** Shared public layout pieces (`PublicPageBodySection`, `PublicPageCtaFooter`, eyebrow on `PublicPageIntro`); single `<main>` via `(site)/layout.tsx`; aligned labels (**About us** in header; footer legal **Privacy policy** / **Terms of use**); restructured About, Programmes, Contact, Policies, Blog/Events/Newsletter/Volunteer/Donate pages into intro → body → CTA; FAQ footer CTAs fixed (no `/safeguarding` 404 → `#transparency`); clearer verb-led links across listing/detail placeholders.

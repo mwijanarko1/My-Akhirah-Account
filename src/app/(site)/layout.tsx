@@ -6,7 +6,9 @@ export default function SiteLayout({ children }: { children: ReactNode }) {
     return (
         <>
             <Header />
-            <div className="min-w-0 flex-1 flex flex-col">{children}</div>
+            <main id="main-content" className="min-w-0 flex-1 flex flex-col">
+                {children}
+            </main>
             <Footer />
         </>
     );

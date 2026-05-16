@@ -10,6 +10,11 @@ type Props = { params: Promise<{ slug: string }> };
 export default async function ProgrammeDetailPage({ params }: Props) {
     const { slug } = await params;
     return (
-        <ComingSoonDetail kind="Programme" slug={slug} listHref="/programmes" listLabel="All programmes" />
+        <ComingSoonDetail
+            kind="Programme"
+            slug={slug}
+            listHref="/programmes"
+            listLabel="View programmes overview"
+        />
     );
 }

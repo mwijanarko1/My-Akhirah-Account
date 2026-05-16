@@ -94,7 +94,7 @@ const faqSections: FaqSection[] = [
 
 export default function FaqPage() {
     return (
-        <main className="min-w-0 flex-1 bg-purity-white">
+        <>
             <section className="bg-akhirah-teal text-purity-white border-b border-white/10">
                 <div className="container-custom max-w-full py-14 sm:py-16 md:py-20">
                     <div className="max-w-3xl">
@@ -171,27 +171,27 @@ export default function FaqPage() {
                         </p>
                         <div className="flex flex-col sm:flex-row sm:flex-wrap gap-3">
                             <Link
-                                href="/safeguarding"
+                                href="/faq#transparency"
                                 className="inline-flex min-h-11 items-center justify-center rounded-sm border border-white/30 px-4 py-2 text-purity-white hover:text-eternal-gold hover:border-eternal-gold transition-colors"
                             >
-                                Safeguarding Policy
+                                Read safeguarding FAQs
                             </Link>
                             <Link
                                 href="/contact"
                                 className="inline-flex min-h-11 items-center justify-center rounded-sm border border-white/30 px-4 py-2 text-purity-white hover:text-eternal-gold hover:border-eternal-gold transition-colors"
                             >
-                                Contact Us
+                                Go to contact page
                             </Link>
                             <Link
                                 href="/volunteer"
                                 className="inline-flex min-h-11 items-center justify-center rounded-sm border border-white/30 px-4 py-2 text-purity-white hover:text-eternal-gold hover:border-eternal-gold transition-colors"
                             >
-                                Volunteer With Us
+                                Explore volunteering
                             </Link>
                         </div>
                     </div>
                 </div>
             </section>
-        </main>
+        </>
     );
 }
