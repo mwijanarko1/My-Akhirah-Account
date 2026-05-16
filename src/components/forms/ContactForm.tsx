@@ -7,8 +7,20 @@ import {
   type ContactDraft,
 } from "@/lib/validation/formsClient";
 
-const fieldClass =
-  "min-h-11 w-full px-4 py-3 text-base rounded-sm border border-akhirah-teal/15 bg-purity-white text-account-black placeholder:text-account-black/40 focus:outline-none focus:ring-2 focus:ring-eternal-gold";
+const baseField =
+  "min-h-11 w-full px-4 py-3 text-base rounded-sm border bg-purity-white text-account-black placeholder:text-account-black/40 focus:outline-none focus:ring-2 focus:ring-eternal-gold";
+
+function fieldClassFor(invalid: boolean): string {
+  return `${baseField} ${invalid ? "border-red-600" : "border-akhirah-teal/15"}`;
+}
+
+const FIELD_ORDER: Array<keyof ContactDraft> = [
+  "fullName",
+  "email",
+  "phone",
+  "subject",
+  "message",
+];
 
 export default function ContactForm() {
   const startedAt = useMemo(() => String(Date.now()), []);
@@ -46,7 +58,13 @@ export default function ContactForm() {
 
     const next = validateContactDraft(draft);
     setErrors(next);
-    if (Object.keys(next).length > 0) return;
+    if (Object.keys(next).length > 0) {
+      const firstKey = FIELD_ORDER.find((k) => next[k]);
+      if (firstKey) {
+        document.getElementById(`contact-${firstKey}`)?.focus();
+      }
+      return;
+    }
 
     setSubmitting(true);
     try {
@@ -96,6 +114,29 @@ export default function ContactForm() {
         </div>
       ) : null}
 
+      {Object.values(errors).some(Boolean) ? (
+        <div
+          role="alert"
+          aria-labelledby="contact-errors-title"
+          className="rounded-sm border border-red-300 bg-red-50 p-4"
+        >
+          <p id="contact-errors-title" className="text-sm font-semibold text-red-700">
+            Please fix the following:
+          </p>
+          <ul className="list-disc pl-5 mt-2 text-sm text-red-700">
+            {FIELD_ORDER.map((k) =>
+              errors[k] ? (
+                <li key={k}>
+                  <a href={`#contact-${k}`} className="underline">
+                    {errors[k]}
+                  </a>
+                </li>
+              ) : null,
+            )}
+          </ul>
+        </div>
+      ) : null}
+
       <div>
         <label htmlFor="contact-fullName" className="block text-sm font-semibold text-akhirah-teal mb-1.5">
           Full name <span className="text-red-700">*</span>
@@ -107,7 +148,7 @@ export default function ContactForm() {
           autoComplete="name"
           required
           maxLength={160}
-          className={fieldClass}
+          className={fieldClassFor(Boolean(errors.fullName))}
           value={draft.fullName}
           onChange={(e) => setField("fullName")(e.target.value)}
           disabled={submitting}
@@ -134,7 +175,7 @@ export default function ContactForm() {
           autoComplete="email"
           required
           maxLength={255}
-          className={fieldClass}
+          className={fieldClassFor(Boolean(errors.email))}
           value={draft.email}
           onChange={(e) => setField("email")(e.target.value)}
           disabled={submitting}
@@ -158,7 +199,7 @@ export default function ContactForm() {
           type="tel"
           autoComplete="tel"
           maxLength={60}
-          className={fieldClass}
+          className={fieldClassFor(Boolean(errors.phone))}
           value={draft.phone}
           onChange={(e) => setField("phone")(e.target.value)}
           disabled={submitting}
@@ -183,7 +224,7 @@ export default function ContactForm() {
           autoComplete="on"
           required
           maxLength={200}
-          className={fieldClass}
+          className={fieldClassFor(Boolean(errors.subject))}
           value={draft.subject}
           onChange={(e) => setField("subject")(e.target.value)}
           disabled={submitting}
@@ -208,7 +249,7 @@ export default function ContactForm() {
           autoComplete="off"
           required
           maxLength={6000}
-          className={`${fieldClass} min-h-[9rem] resize-y`}
+          className={`${fieldClassFor(Boolean(errors.message))} min-h-[9rem] resize-y`}
           value={draft.message}
           onChange={(e) => setField("message")(e.target.value)}
           disabled={submitting}
