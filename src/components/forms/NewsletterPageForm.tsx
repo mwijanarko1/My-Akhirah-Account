@@ -2,6 +2,8 @@
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { validateNewsletterDraft, mapSubmitError, type NewsletterDraft } from "@/lib/validation/formsClient";
+import { newsletterSubmissionStatusUi, type SubmissionStatusUi } from "@/lib/forms/publicSubmissionStatus";
+import SubmissionStatusCallout from "@/components/forms/SubmissionStatusCallout";
 
 const fieldClass =
   "min-h-11 w-full px-4 py-3 text-base rounded-sm border border-akhirah-teal/15 bg-purity-white text-account-black placeholder:text-account-black/40 focus:outline-none focus:ring-2 focus:ring-eternal-gold";
@@ -17,7 +19,7 @@ export default function NewsletterPageForm({ source = "newsletter-page" }: Newsl
   const [errors, setErrors] = useState<Partial<Record<keyof NewsletterDraft, string>>>({});
   const [formError, setFormError] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [success, setSuccess] = useState(false);
+  const [successUi, setSuccessUi] = useState<SubmissionStatusUi | null>(null);
   const [honeypotArmed, setHoneypotArmed] = useState(false);
   const [company, setCompany] = useState("");
 
@@ -28,7 +30,7 @@ export default function NewsletterPageForm({ source = "newsletter-page" }: Newsl
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setFormError("");
-    setSuccess(false);
+    setSuccessUi(null);
 
     const next = validateNewsletterDraft(draft);
     setErrors(next);
@@ -49,7 +51,7 @@ export default function NewsletterPageForm({ source = "newsletter-page" }: Newsl
         setFormError(mapSubmitError(body));
         return;
       }
-      setSuccess(true);
+      setSuccessUi(newsletterSubmissionStatusUi(body.status));
       setDraft({ email: "" });
     } catch {
       setFormError("Unable to subscribe right now.");
@@ -92,7 +94,7 @@ export default function NewsletterPageForm({ source = "newsletter-page" }: Newsl
             setDraft({ email: e.target.value });
             setErrors({});
             setFormError("");
-            setSuccess(false);
+            setSuccessUi(null);
           }}
           disabled={submitting}
           aria-invalid={Boolean(errors.email)}
@@ -117,11 +119,7 @@ export default function NewsletterPageForm({ source = "newsletter-page" }: Newsl
           {formError}
         </p>
       ) : null}
-      {success ? (
-        <p className="text-sm font-semibold text-akhirah-teal" role="status">
-          Thanks — check your inbox to confirm subscription details when available.
-        </p>
-      ) : null}
+      {successUi ? <SubmissionStatusCallout {...successUi} /> : null}
 
       <button type="submit" className="btn btn-primary font-bold min-h-11 w-full sm:w-auto" disabled={submitting} aria-busy={submitting}>
         {submitting ? "Subscribing…" : "Subscribe"}

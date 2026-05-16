@@ -1,119 +1,58 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import PublicPageBodySection from "@/components/layout/PublicPageBodySection";
-import PublicPageCtaFooter from "@/components/layout/PublicPageCtaFooter";
 import PublicPageIntro from "@/components/layout/PublicPageIntro";
+import { getProgrammesPublicList } from "@/lib/server/programmes";
 
 export const metadata: Metadata = {
-    title: "Programmes | My Akhirah Account",
-    description: "Long-running programme areas — water, food, health, education, and more.",
+  title: "Programmes | My Akhirah Account",
+  description: "Long-running programme areas — water, food, health, education, and more.",
 };
 
-const essentials = [
-    {
-        title: "Water & sanitation",
-        href: "/programmes/water",
-        body: "Wells, hygiene training, and safe water for whole villages.",
-    },
-    {
-        title: "Food security",
-        href: "/programmes/food",
-        body: "Hot meals, parcels, and agricultural support where hunger bites hardest.",
-    },
-    {
-        title: "Health & clinics",
-        href: "/programmes/health",
-        body: "Mobile clinics, vaccines, and maternal health services.",
-    },
-];
+export default async function ProgrammesPage() {
+  const programmes = await getProgrammesPublicList();
 
-const recovery = [
-    {
-        title: "Education",
-        href: "/programmes/education",
-        body: "Schools, supplies, and scholarships so children keep learning.",
-    },
-    {
-        title: "Shelter & recovery",
-        href: "/programmes/shelter",
-        body: "Temporary shelter, repairs, and cash assistance after emergencies.",
-    },
-    {
-        title: "Livelihoods",
-        href: "/programmes/livelihoods",
-        body: "Skills training, tools, and small grants to rebuild income.",
-    },
-];
-
-function ProgrammeGroup({
-    heading,
-    subtitle,
-    items,
-}: {
-    heading: string;
-    subtitle: string;
-    items: { title: string; href: string; body: string }[];
-}) {
-    return (
-        <div className="space-y-5">
-            <div>
-                <h2 className="text-xl sm:text-2xl font-bold text-akhirah-teal">{heading}</h2>
-                <p className="mt-2 text-sm sm:text-base text-account-black/75">{subtitle}</p>
-            </div>
-            <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 list-none p-0 m-0">
-                {items.map((item) => (
-                    <li key={item.href}>
-                        <Link
-                            href={item.href}
-                            className="block h-full rounded-sm border border-akhirah-teal/15 bg-purity-white p-4 sm:p-5 shadow-sm transition-colors hover:border-akhirah-teal/35 hover:bg-mercy-mint/30"
-                        >
-                            <h3 className="text-lg font-bold text-akhirah-teal mb-2">{item.title}</h3>
-                            <p className="text-sm text-account-black/80 leading-relaxed">{item.body}</p>
-                            <span className="mt-3 inline-block text-sm font-semibold text-akhirah-teal">
-                                Open programme overview →
-                            </span>
-                        </Link>
-                    </li>
-                ))}
-            </ul>
+  return (
+    <PublicPageIntro
+      title="Programmes"
+      description="Programmes are how we organise long-term work with communities — wells, clinics, schools, livelihoods, and emergency recovery."
+    >
+      {programmes.length === 0 ? (
+        <div
+          role="status"
+          className="mb-8 rounded-sm border border-akhirah-teal/15 bg-mercy-mint/50 px-5 py-8 text-center"
+        >
+          <p className="text-base font-semibold text-akhirah-teal">No published programmes yet</p>
+          <p className="mx-auto mt-2 max-w-lg text-sm leading-relaxed text-account-black/75">
+            When the team publishes active programmes in the admin system, they will appear here automatically. You can
+            still explore campaigns and other ways to give in the meantime.
+          </p>
+          <Link href="/campaigns" className="btn btn-primary mt-6 inline-flex font-bold">
+            View campaigns
+          </Link>
         </div>
-    );
-}
+      ) : (
+        <ul className="mb-8 space-y-4">
+          {programmes.map((program) => (
+            <li key={program.slug}>
+              <Link
+                href={`/programmes/${program.slug}`}
+                className="block rounded-sm border border-akhirah-teal/12 bg-purity-white p-5 shadow-sm transition-shadow hover:border-akhirah-teal/25 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-eternal-gold"
+              >
+                <h2 className="text-lg font-bold text-akhirah-teal sm:text-xl">{program.name}</h2>
+                <p className="mt-2 text-sm leading-relaxed text-account-black/80 sm:text-base">{program.summary}</p>
+                <span className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-akhirah-teal">
+                  Read more
+                  <span aria-hidden>→</span>
+                </span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
 
-export default function ProgrammesPage() {
-    return (
-        <>
-            <PublicPageIntro
-                eyebrow="Programmes"
-                title="Where long-term change happens"
-                description="Programmes are how we organise sustained work with communities — alongside shorter emergency appeals you will find under Campaigns."
-            />
-
-            <PublicPageBodySection surface="white" spacious wide>
-                <ProgrammeGroup
-                    heading="Essential services"
-                    subtitle="Foundational needs: clean water, food, and healthcare access."
-                    items={essentials}
-                />
-            </PublicPageBodySection>
-
-            <PublicPageBodySection surface="mint" spacious wide>
-                <ProgrammeGroup
-                    heading="Recovery, learning, and livelihoods"
-                    subtitle="Education, rebuilding after crisis, and routes back to independence."
-                    items={recovery}
-                />
-            </PublicPageBodySection>
-
-            <PublicPageCtaFooter
-                title="Support an appeal today"
-                description="Programmes are funded through appeals and general giving — browse active campaigns or donate to the general route approved by your team."
-                actions={[
-                    { href: "/campaigns", label: "Browse campaigns", variant: "primary" },
-                    { href: "/donate", label: "Go to donate", variant: "outlineOnDark" },
-                    { href: "/faq", label: "Questions about giving", variant: "outlineOnDark" },
-                ]}
-            />
-        </>
-    );
+      <Link href="/" className="btn btn-secondary font-semibold">
+        Back to homepage
+      </Link>
+    </PublicPageIntro>
+  );
 }

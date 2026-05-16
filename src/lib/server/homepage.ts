@@ -1,6 +1,6 @@
 import { api } from "../../../convex/_generated/api";
 import type { HomepagePayload } from "../../../convex/lib/dtos";
-import { mockBlogs, mockCampaigns, mockEvents, mockImpacts, mockStats } from "../mockData";
+import { mockBlogs, mockCampaigns, mockEvents } from "../mockData";
 import { fetchConvexQuery } from "./convex";
 
 const fallbackHomepage: HomepagePayload = {
@@ -36,11 +36,11 @@ const fallbackHomepage: HomepagePayload = {
       variant: "primary",
     },
   ],
-  stats: mockStats,
+  stats: [],
   campaigns: mockCampaigns,
   posts: mockBlogs,
   events: mockEvents,
-  impacts: mockImpacts,
+  impacts: [],
 };
 
 export async function getHomepageData(): Promise<HomepagePayload> {
@@ -56,6 +56,8 @@ export async function getHomepageData(): Promise<HomepagePayload> {
 
     const statsFromConvex =
       stats.length > 0 ? stats : siteData.stats.length > 0 ? siteData.stats : [];
+    const impactsFromConvex =
+      impacts.length > 0 ? impacts : siteData.impacts.length > 0 ? siteData.impacts : [];
 
     return {
       ...fallbackHomepage,
@@ -63,9 +65,8 @@ export async function getHomepageData(): Promise<HomepagePayload> {
       campaigns: campaigns.length > 0 ? campaigns : fallbackHomepage.campaigns,
       posts: posts.length > 0 ? posts : fallbackHomepage.posts,
       events: events.length > 0 ? events : fallbackHomepage.events,
-      stats:
-        statsFromConvex.length > 0 ? statsFromConvex : fallbackHomepage.stats,
-      impacts: impacts.length > 0 ? impacts : fallbackHomepage.impacts,
+      stats: statsFromConvex,
+      impacts: impactsFromConvex,
     };
   } catch {
     return fallbackHomepage;
