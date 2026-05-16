@@ -143,6 +143,14 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
+/* About: extra horizontal breathing room on small viewports */
+@media (max-width: 767px) {
+  .about-page .container-custom {
+    padding-left: max(1.5rem, env(safe-area-inset-left, 0px));
+    padding-right: max(1.5rem, env(safe-area-inset-right, 0px));
+  }
+}
+
 /* Reduced Motion */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {

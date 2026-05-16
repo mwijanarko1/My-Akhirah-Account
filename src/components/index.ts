@@ -6,6 +6,7 @@ export { default as VolunteerForm } from "./forms/VolunteerForm";
 export { default as NewsletterPageForm } from "./forms/NewsletterPageForm";
 export { default as Hero } from "./sections/Hero";
 export { default as SectionHeader } from "./sections/SectionHeader";
+export { default as ContentSection } from "./sections/ContentSection";
 export { default as Banner } from "./sections/Banner";
 export { default as Stats } from "./sections/Stats";
 export { default as EmergencyBar } from "./sections/EmergencyBar";
