@@ -34,6 +34,9 @@ const transparencyTiles = [
     { href: "/faq", label: "Safeguarding" },
 ] as const;
 
+const footerLinkClassName =
+    "flex min-h-11 items-center text-white/70 hover:text-white text-sm transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-eternal-gold";
+
 const socialLinks = [
     { href: "https://facebook.com", label: "Facebook", icon: "facebook" },
     { href: "https://twitter.com", label: "Twitter", icon: "twitter" },
@@ -87,7 +90,10 @@ export default function Footer() {
                 <div className="container-custom max-w-full">
                     <div className="grid grid-cols-1 gap-10 mb-10 sm:grid-cols-2 sm:gap-x-8 sm:gap-y-10 sm:mb-12 lg:grid-cols-[minmax(0,1.15fr)_repeat(3,minmax(0,1fr))] lg:items-start lg:gap-8">
                         <div className="sm:col-span-2 lg:col-span-1 lg:max-w-[16rem]">
-                            <Link href="/" className="inline-block mb-4">
+                            <Link
+                                href="/"
+                                className="inline-block mb-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-eternal-gold rounded-sm"
+                            >
                                 <Image
                                     src="/Logo Png White@3x.png"
                                     alt="My Akhirah Account"
@@ -107,7 +113,7 @@ export default function Footer() {
                                         href={social.href}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="h-11 w-11 rounded-sm bg-white/10 flex items-center justify-center hover:bg-eternal-gold hover:text-account-black transition-colors"
+                                        className="h-11 w-11 rounded-sm bg-white/10 flex items-center justify-center hover:bg-eternal-gold hover:text-account-black transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-eternal-gold"
                                         aria-label={`${social.label} (opens in new tab)`}
                                     >
                                         <SocialIcon icon={social.icon} />
@@ -124,10 +130,7 @@ export default function Footer() {
                                 <ul className="space-y-1.5">
                                     {column.links.map((link) => (
                                         <li key={`${column.title}-${link.href}-${link.label}`}>
-                                            <Link
-                                                href={link.href}
-                                                className="flex min-h-11 items-center text-white/70 hover:text-white text-sm transition-colors"
-                                            >
+                                            <Link href={link.href} className={footerLinkClassName}>
                                                 {link.label}
                                             </Link>
                                         </li>

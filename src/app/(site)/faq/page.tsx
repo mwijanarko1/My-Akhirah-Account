@@ -60,7 +60,7 @@ const faqSections: FaqSection[] = [
     {
         id: "volunteering",
         title: "Volunteering",
-        intro: "Giving your time is a form of sadaqah. Here is how to get involved.",
+        intro: "Giving your time is a form of Sadaqah. Here is how to get involved.",
         items: [
             { question: "How do I register as a volunteer?", answer: "TODO: Mikhail copy" },
             { question: "Do all volunteer roles require background checks?", answer: "TODO: Mikhail copy" },
@@ -92,11 +92,23 @@ const faqSections: FaqSection[] = [
     },
 ];
 
+const jumpLabels: Record<string, string> = {
+    donations: "Jump to donation questions",
+    receipts: "Jump to receipt questions",
+    "zakat-sadaqah": "Jump to Zakat and Sadaqah questions",
+    volunteering: "Jump to volunteering questions",
+    contact: "Jump to contact questions",
+    transparency: "Jump to transparency questions",
+};
+
+const interactiveFocusClassName =
+    "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-eternal-gold";
+
 export default function FaqPage() {
     return (
         <main className="min-w-0 flex-1 bg-purity-white">
             <section className="bg-akhirah-teal text-purity-white border-b border-white/10">
-                <div className="container-custom max-w-full py-14 sm:py-16 md:py-20">
+                <div className="container-custom max-w-full py-12 sm:py-16 md:py-16">
                     <div className="max-w-3xl">
                         <p className="text-xs font-semibold uppercase tracking-wider text-eternal-gold mb-3">Support</p>
                         <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-balance break-words mb-4">
@@ -112,42 +124,65 @@ export default function FaqPage() {
 
             <section className="section bg-purity-white">
                 <div className="container-custom">
+                    <nav
+                        aria-label="Jump to FAQ sections"
+                        className="mb-8 rounded-sm border border-akhirah-teal/15 bg-mercy-mint/30 p-4"
+                    >
+                        <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-akhirah-teal">
+                            Jump to a topic
+                        </p>
+                        <ul className="flex flex-wrap gap-2 sm:gap-3">
+                            {faqSections.map((section) => (
+                                <li key={section.id}>
+                                    <a
+                                        href={`#${section.id}`}
+                                        className={`inline-flex min-h-11 items-center rounded-sm border border-akhirah-teal/20 bg-purity-white px-3 py-2 text-sm font-semibold text-akhirah-teal transition-colors hover:border-akhirah-teal/40 hover:bg-mercy-mint/50 ${interactiveFocusClassName}`}
+                                    >
+                                        {jumpLabels[section.id] ?? section.title}
+                                    </a>
+                                </li>
+                            ))}
+                        </ul>
+                    </nav>
+
                     <div className="grid grid-cols-1 gap-6 lg:gap-8">
                         {faqSections.map((section, index) => (
                             <article
                                 key={section.id}
                                 id={section.id}
-                                className={`rounded-sm border border-akhirah-teal/15 p-5 sm:p-6 md:p-8 ${
+                                className={`scroll-mt-28 md:scroll-mt-32 rounded-sm border border-akhirah-teal/15 p-4 sm:p-6 md:p-8 ${
                                     index % 2 === 1 ? "bg-mercy-mint/40" : "bg-purity-white"
                                 }`}
                             >
                                 <h2 className="text-2xl sm:text-3xl font-bold text-akhirah-teal text-balance break-words mb-2">
                                     {section.title}
                                 </h2>
-                                <p className="text-account-black/75 text-sm sm:text-base mb-6">{section.intro}</p>
+                                <p className="mb-6 break-words text-sm text-account-black/75 sm:text-base">{section.intro}</p>
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
+                                <div className="grid min-w-0 grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2">
                                     {section.items.map((item) => (
                                         <details
                                             key={item.question}
-                                            className="group rounded-sm border border-akhirah-teal/15 bg-purity-white p-4 sm:p-5"
+                                            className="group min-w-0 overflow-hidden rounded-sm border border-akhirah-teal/15 bg-purity-white p-4 sm:p-6"
                                         >
-                                            <summary className="min-h-11 cursor-pointer list-none pr-7 text-base sm:text-lg leading-snug font-semibold text-account-black break-words relative">
-                                                {item.question}
+                                            <summary
+                                                className={`flex min-h-11 cursor-pointer list-none items-start gap-3 rounded-sm text-base font-semibold leading-snug text-account-black sm:text-lg ${interactiveFocusClassName}`}
+                                            >
+                                                <span className="min-w-0 flex-1 break-words">{item.question}</span>
                                                 <span
-                                                    className="absolute right-0 top-0 text-akhirah-teal/70 group-open:hidden"
+                                                    className="shrink-0 pt-0.5 text-lg leading-none text-akhirah-teal/70 group-open:hidden"
                                                     aria-hidden
                                                 >
                                                     +
                                                 </span>
                                                 <span
-                                                    className="absolute right-0 top-0 hidden text-akhirah-teal/70 group-open:inline"
+                                                    className="hidden shrink-0 pt-0.5 text-lg leading-none text-akhirah-teal/70 group-open:inline"
                                                     aria-hidden
                                                 >
                                                     −
                                                 </span>
                                             </summary>
-                                            <p className="mt-3 text-account-black/80 text-sm sm:text-base leading-relaxed">
+                                            <p className="mt-3 max-w-full break-words text-sm leading-relaxed text-account-black/80 sm:text-base">
                                                 {item.answer}
                                             </p>
                                         </details>
@@ -159,34 +194,36 @@ export default function FaqPage() {
                 </div>
             </section>
 
-            <section className="section bg-akhirah-teal">
+            {/* DonorTrustSection, SafeguardingSection, HowDonationsAreUsed — imported after Week 2 merges into main */}
+
+            <section className="section border-t border-white/10 bg-akhirah-teal">
                 <div className="container-custom">
-                    <div className="max-w-4xl rounded-sm border border-white/15 bg-white/5 p-5 sm:p-6 md:p-8">
-                        <h2 className="text-2xl sm:text-3xl font-bold text-purity-white mb-3">
+                    <div className="max-w-4xl rounded-sm border border-white/15 bg-white/5 p-6 sm:p-8">
+                        <h2 className="mb-3 text-2xl font-bold text-purity-white sm:text-3xl">
                             Trust and safeguarding support
                         </h2>
-                        <p className="text-white/85 text-sm sm:text-base leading-relaxed mb-6">
+                        <p className="mb-6 text-sm leading-relaxed text-white/85 sm:text-base">
                             We are committed to responsible stewardship, clear accountability, and safe reporting routes
                             for every supporter, volunteer, and beneficiary.
                         </p>
-                        <div className="flex flex-col sm:flex-row sm:flex-wrap gap-3">
-                            <Link
-                                href="/safeguarding"
-                                className="inline-flex min-h-11 items-center justify-center rounded-sm border border-white/30 px-4 py-2 text-purity-white hover:text-eternal-gold hover:border-eternal-gold transition-colors"
+                        <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                            <a
+                                href="#transparency"
+                                className={`inline-flex min-h-11 items-center justify-center rounded-sm border border-white/30 px-4 py-2 text-purity-white transition-colors hover:border-eternal-gold hover:text-eternal-gold ${interactiveFocusClassName}`}
                             >
-                                Safeguarding Policy
-                            </Link>
+                                Jump to transparency and safeguarding questions
+                            </a>
                             <Link
                                 href="/contact"
-                                className="inline-flex min-h-11 items-center justify-center rounded-sm border border-white/30 px-4 py-2 text-purity-white hover:text-eternal-gold hover:border-eternal-gold transition-colors"
+                                className={`inline-flex min-h-11 items-center justify-center rounded-sm border border-white/30 px-4 py-2 text-purity-white transition-colors hover:border-eternal-gold hover:text-eternal-gold ${interactiveFocusClassName}`}
                             >
-                                Contact Us
+                                Contact our team
                             </Link>
                             <Link
                                 href="/volunteer"
-                                className="inline-flex min-h-11 items-center justify-center rounded-sm border border-white/30 px-4 py-2 text-purity-white hover:text-eternal-gold hover:border-eternal-gold transition-colors"
+                                className={`inline-flex min-h-11 items-center justify-center rounded-sm border border-white/30 px-4 py-2 text-purity-white transition-colors hover:border-eternal-gold hover:text-eternal-gold ${interactiveFocusClassName}`}
                             >
-                                Volunteer With Us
+                                Volunteer with us
                             </Link>
                         </div>
                     </div>
